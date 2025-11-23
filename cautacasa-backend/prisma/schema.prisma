@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int         @id @default(autoincrement())
+  name          String
+  email         String       @unique
+  phone         String
+  password      String
+  phoneVerified Boolean      @default(false)
+  phoneOTP      String?
+  otpExpiresAt  DateTime?
+  role          Role         @default(USER)
+  createdAt     DateTime     @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Listing {
+  id             Int              @id @default(autoincrement())
+  title          String
+  price          Int?
+  description    String?
+  city           String?
+  image          String?
+  link           String           @unique
+  source         ListingSource
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())    @updatedAt
+  convertedPrice Float?
+  currency       String?
+  transaction    TransactionType  @default(UNKNOWN)
+}
+
+enum ListingSource {
+  OLX
+  PUBLI24
+}
+
+enum TransactionType {
+  RENT
+  SALE
+  UNKNOWN
+}
+
