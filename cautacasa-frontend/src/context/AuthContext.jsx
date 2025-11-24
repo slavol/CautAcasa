@@ -1,34 +1,45 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
-export const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-export default function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token");
+    if (token) axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }, [token]);
 
-    if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+  const login = (userData, jwt) => {
+    setUser(userData);
+    setToken(jwt);
 
-  const login = (user, token) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
-    setUser(user);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", jwt);
+
+    axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
   };
 
   const logout = () => {
+    setUser(null);
+    setToken(null);
+
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }

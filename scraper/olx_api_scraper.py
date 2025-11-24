@@ -72,35 +72,33 @@ def insert_listing(conn, listing):
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO "Listing"
-                    (title, price, currency, "convertedPrice",
-                     description, city, image, link, transaction, source)
-                VALUES
-                    (%s, %s, %s, %s,
-                     %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (link)
-                DO UPDATE SET
-                    title = EXCLUDED.title,
-                    price = EXCLUDED.price,
-                    currency = EXCLUDED.currency,
-                    "convertedPrice" = EXCLUDED."convertedPrice",
-                    description = EXCLUDED.description,
-                    city = EXCLUDED.city,
-                    image = EXCLUDED.image,
-                    transaction = EXCLUDED.transaction,
-                    "updatedAt" = NOW();
-            """, (
-                listing["title"],
-                listing["price"],
-                listing["currency"],
-                listing["converted_price"],
-                listing["description"],
-                listing["city"],
-                listing["image"],
-                listing["link"],
-                listing["transaction"],
-                listing["source"]
-            ))
+    INSERT INTO "Listing"
+        (title, price, currency, "convertedPrice", description, city, image, link, transaction, source)
+    VALUES
+        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT (link)
+    DO UPDATE SET
+        title = EXCLUDED.title,
+        price = EXCLUDED.price,
+        currency = EXCLUDED.currency,
+        "convertedPrice" = EXCLUDED."convertedPrice",
+        description = EXCLUDED.description,
+        city = EXCLUDED.city,
+        image = EXCLUDED.image,
+        transaction = EXCLUDED.transaction,
+        "updatedAt" = NOW();
+""", (
+    listing["title"],
+    listing["price"],
+    listing["currency"],
+    listing["converted_price"],
+    listing["description"],
+    listing["city"],
+    listing["image"],
+    listing["link"],
+    listing["transaction"],
+    listing["source"]
+))
 
         conn.commit()
         print(f"[OK] {listing['title'][:60]}")

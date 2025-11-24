@@ -17,6 +17,8 @@ model User {
   phoneOTP      String?
   otpExpiresAt  DateTime?
   role          Role         @default(USER)
+  favorites  Favorite[]
+  history    History[]
   createdAt     DateTime     @default(now())
 }
 
@@ -26,19 +28,24 @@ enum Role {
 }
 
 model Listing {
-  id             Int              @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   title          String
   price          Int?
   description    String?
   city           String?
   image          String?
-  link           String           @unique
+  link           String          @unique
   source         ListingSource
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())    @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt       @default(now())
   convertedPrice Float?
   currency       String?
-  transaction    TransactionType  @default(UNKNOWN)
+  transaction    TransactionType @default(UNKNOWN)
+
+  ai ListingAI?
+
+  favorites Favorite[]
+  history   History[]
 }
 
 enum ListingSource {
@@ -52,3 +59,46 @@ enum TransactionType {
   UNKNOWN
 }
 
+model ListingAI {
+  id             Int       @id @default(autoincrement())
+  listingId      Int       @unique
+  cleanTitle     String?
+  propertyType   String?
+  transaction    TransactionType? 
+  rooms          Int?
+  summary        String?
+  highlights     String[]
+  features       String[]
+  priceRON       Int?
+  priceEUR       Int?
+  city           String?
+  zone           String?
+  isOwner        Boolean?
+  qualityScore   Int?
+  aiVersion      Int       @default(1)
+  updatedAt      DateTime  @updatedAt
+
+  Listing Listing @relation(fields: [listingId], references: [id])
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  listingId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@unique([userId, listingId])
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  listingId Int
+  visitedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  listing Listing @relation(fields: [listingId], references: [id])
+}

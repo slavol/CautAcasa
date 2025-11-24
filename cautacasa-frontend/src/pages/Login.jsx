@@ -1,13 +1,13 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { loginUser } from "../api/auth";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function Login() {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();               // 🔥 FIX: folosim hook-ul direct
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -21,10 +21,17 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const res = await loginUser(form);
-      login(res.data.user, res.data.token);
-      navigate("/");
+
+      // validare minimală
+      if (!res.data?.user || !res.data?.token) {
+        alert("Răspuns invalid de la server.");
+        return;
+      }
+
+      login(res.data.user, res.data.token);  // 🔥 salvăm în context
+      navigate("/listings");                 // 🔥 redirecționare
     } catch (err) {
-      alert(err.response?.data?.message || "Eroare autentificare.");
+      alert(err.response?.data?.message || "Eroare de autentificare.");
     }
   };
 
@@ -40,8 +47,21 @@ export default function Login() {
         </h2>
 
         <div className="flex flex-col gap-5">
-          <Input label="Email" name="email" type="email" value={form.email} onChange={handleChange} />
-          <Input label="Parolă" name="password" type="password" value={form.password} onChange={handleChange} />
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+          />
+
+          <Input
+            label="Parolă"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+          />
         </div>
 
         <Button onClick={handleLogin} className="w-full mt-6">
@@ -50,7 +70,9 @@ export default function Login() {
 
         <p className="text-center text-gray-600 mt-4">
           Nu ai cont?{" "}
-          <a href="/register" className="text-blue-600 font-semibold">Creează cont</a>
+          <a href="/register" className="text-blue-600 font-semibold">
+            Creează cont
+          </a>
         </p>
       </motion.div>
     </div>
