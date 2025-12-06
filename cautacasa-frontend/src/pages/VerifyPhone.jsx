@@ -1,5 +1,6 @@
+// src/pages/VerifyPhone.jsx
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { verifyPhone } from "../api/auth";
@@ -7,18 +8,18 @@ import { motion } from "framer-motion";
 
 export default function VerifyPhone() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const userId = new URLSearchParams(location.search).get("userId");
-
   const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleVerify = async () => {
     try {
+      setLoading(true);
       await verifyPhone({ otp });
       navigate("/listings");
     } catch (err) {
       alert(err.response?.data?.message || "Cod invalid.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,7 +41,7 @@ export default function VerifyPhone() {
           onChange={(e) => setOtp(e.target.value)}
         />
 
-        <Button onClick={handleVerify} className="w-full mt-6">
+        <Button onClick={handleVerify} className="w-full mt-6" disabled={loading}>
           Confirmă
         </Button>
       </motion.div>

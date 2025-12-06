@@ -1,7 +1,7 @@
+// src/controllers/authcontroller.js
 import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
 import { generateOTP } from "../utils/generateOTP.js";
 
 // REGISTER
@@ -16,9 +16,9 @@ export const register = async (req, res) => {
 
     const hash = await bcrypt.hash(password, 10);
 
-    // Pentru testare: dacă phone începe cu "test", folosește OTP fix "123456"
+    // OTP pentru test
     const otp = phone.startsWith("test") ? "123456" : generateOTP();
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minute
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
     const user = await prisma.user.create({
       data: {
@@ -32,48 +32,53 @@ export const register = async (req, res) => {
       }
     });
 
+    // GENERARE TOKEN LA REGISTER ❗
+    const token = jwt.sign(
+      { id: user.id, role: user.role, phoneVerified: false },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-    // TODO: Replace with real SMS.ro integration
-    // Only show OTP in development mode
-    if (process.env.NODE_ENV === 'development') {
+    // Logăm OTP doar în development
+    if (process.env.NODE_ENV === "development") {
       console.log(`
-╔════════════════════════════════════════════╗
-║  OTP PENTRU VERIFICARE (TEMPORAR)         ║
-║  Telefon: ${phone.padEnd(30)}║
-║  Cod OTP: ${otp.padEnd(30)}║
-║  Expiră în 30 minute                      ║
-╚════════════════════════════════════════════╝
+====== OTP DEV ======
+Telefon: ${phone}
+OTP: ${otp}
+=====================
       `);
     }
 
     res.status(201).json({
-      message: "Cont creat. Introdu codul OTP trimis pe telefon.",
-      userId: user.id,
-      // Pentru testing, returnăm OTP-ul în response (DOAR DEVELOPMENT!)
-      ...(process.env.NODE_ENV === 'development' && phone.startsWith("test") && { otpForTesting: otp })
+      message: "Cont creat. Introdu codul OTP.",
+      token, // ➜ TOKEN trimis la frontend
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        phoneVerified: false
+      },
+      ...(process.env.NODE_ENV === "development" &&
+        phone.startsWith("test") && { otpForTesting: otp })
     });
   } catch (error) {
+    console.error("Register error:", error);
     res.status(500).json({ message: "Eroare server." });
   }
 };
 
-
+// LOGIN
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      return res.status(400).json({ message: "Utilizator inexistent." });
-    }
+    if (!user) return res.status(400).json({ message: "Utilizator inexistent." });
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(400).json({ message: "Parolă greșită." });
-    }
+    if (!match) return res.status(400).json({ message: "Parolă greșită." });
 
-    // NU mai blocăm dacă telefonul nu e verificat
-    // doar reținem informația
     const token = jwt.sign(
       { id: user.id, role: user.role, phoneVerified: user.phoneVerified },
       process.env.JWT_SECRET,
@@ -81,7 +86,7 @@ export const login = async (req, res) => {
     );
 
     res.json({
-      message: "Autentificat cu succes.",
+      message: "Autentificat.",
       token,
       user: {
         id: user.id,
@@ -89,7 +94,7 @@ export const login = async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
-        phoneVerified: user.phoneVerified, 
+        phoneVerified: user.phoneVerified
       }
     });
   } catch (error) {

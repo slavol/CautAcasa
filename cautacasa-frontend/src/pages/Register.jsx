@@ -22,7 +22,11 @@ export default function Register() {
     try {
       const res = await registerUser(form);
 
-      navigate(`/verify-phone?userId=${res.data.userId}`);
+      // SALVĂM TOKEN-UL primit de la backend!!!
+      localStorage.setItem("token", res.data.token);
+
+      // DUPĂ register → mergem direct la verify-phone
+      navigate("/verify-phone");
     } catch (err) {
       alert(err.response?.data?.message || "Eroare server.");
     }
