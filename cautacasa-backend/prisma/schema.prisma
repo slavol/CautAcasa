@@ -24,3 +24,54 @@ enum Role {
   USER
   ADMIN
 }
+
+model Listing {
+  id             Int             @id @default(autoincrement())
+  title          String
+  price          Int?
+  description    String?
+  city           String?
+  image          String?
+  link           String          @unique
+  source         ListingSource
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt       @default(now())
+  convertedPrice Float?
+  currency       String?
+  transaction    TransactionType @default(UNKNOWN)
+
+  ai ListingAI?
+
+}
+
+enum ListingSource {
+  OLX
+}
+
+enum TransactionType {
+  RENT
+  SALE
+  UNKNOWN
+}
+
+model ListingAI {
+  id             Int       @id @default(autoincrement())
+  listingId      Int       @unique
+  cleanTitle     String?
+  propertyType   String?
+  transaction    TransactionType? 
+  rooms          Int?
+  summary        String?
+  highlights     String[]
+  features       String[]
+  priceRON       Int?
+  priceEUR       Int?
+  city           String?
+  zone           String?
+  isOwner        Boolean?
+  qualityScore   Int?
+  aiVersion      Int       @default(1)
+  updatedAt      DateTime  @updatedAt
+
+  Listing Listing @relation(fields: [listingId], references: [id])
+}
