@@ -16,7 +16,7 @@ export default function VerifyPhone() {
   const handleVerify = async () => {
     try {
       await verifyPhone({ otp });
-      navigate("/");
+      navigate("/listings");
     } catch (err) {
       alert(err.response?.data?.message || "Cod invalid.");
     }

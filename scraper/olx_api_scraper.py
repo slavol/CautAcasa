@@ -16,6 +16,32 @@ def get_connection():
     )
 
 # ---------------------------------------
+# Fix OLX image URL
+# ---------------------------------------
+def fix_olx_image(url, width=800, height=600):
+    if not url:
+        return None
+    return url.replace("{width}", str(width)).replace("{height}", str(height))
+
+# ---------------------------------------
+# Fix OLX listing link
+# ---------------------------------------
+def fix_olx_link(link):
+    if not link:
+        return None
+
+    # 1. elimină dublurile gen "https://www.olx.rohttps://www.olx.ro/..."
+    if link.count("https://www.olx.ro") > 1:
+        return "https://www.olx.ro" + link.split("https://www.olx.ro")[-1]
+
+    # 2. dacă e relativ de forma "/d/oferta/..."
+    if link.startswith("/"):
+        return "https://www.olx.ro" + link
+
+    # 3. altfel, dacă deja începe corect
+    return link
+
+# ---------------------------------------
 # Price extraction
 # ---------------------------------------
 def extract_price(item):
@@ -23,9 +49,9 @@ def extract_price(item):
         if p.get("key") == "price" and p.get("value"):
             v = p["value"]
             return (
-                v.get("value"),            # numeric price
-                v.get("currency"),         # EUR / RON
-                v.get("converted_value")   # converted price
+                v.get("value"),
+                v.get("currency"),
+                v.get("converted_value")
             )
     return None, None, None
 
@@ -48,14 +74,17 @@ def parse_listing(item):
     price, currency, converted_price = extract_price(item)
 
     photos = item.get("photos", [])
-    image = photos[0]["link"] if photos else None
+    image = fix_olx_image(photos[0]["link"]) if photos else None
+
+    raw_link = "https://www.olx.ro" + item.get("url", "")
+    link = fix_olx_link(raw_link)
 
     return {
         "title": item.get("title"),
         "description": item.get("description"),
         "city": item.get("location", {}).get("city", {}).get("name"),
         "image": image,
-        "link": "https://www.olx.ro" + item.get("url", ""),
+        "link": link,
 
         "price": price,
         "currency": currency,
@@ -72,33 +101,33 @@ def insert_listing(conn, listing):
     try:
         with conn.cursor() as cur:
             cur.execute("""
-    INSERT INTO "Listing"
-        (title, price, currency, "convertedPrice", description, city, image, link, transaction, source)
-    VALUES
-        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    ON CONFLICT (link)
-    DO UPDATE SET
-        title = EXCLUDED.title,
-        price = EXCLUDED.price,
-        currency = EXCLUDED.currency,
-        "convertedPrice" = EXCLUDED."convertedPrice",
-        description = EXCLUDED.description,
-        city = EXCLUDED.city,
-        image = EXCLUDED.image,
-        transaction = EXCLUDED.transaction,
-        "updatedAt" = NOW();
-""", (
-    listing["title"],
-    listing["price"],
-    listing["currency"],
-    listing["converted_price"],
-    listing["description"],
-    listing["city"],
-    listing["image"],
-    listing["link"],
-    listing["transaction"],
-    listing["source"]
-))
+                INSERT INTO "Listing"
+                    (title, price, currency, "convertedPrice", description, city, image, link, transaction, source)
+                VALUES
+                    (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (link)
+                DO UPDATE SET
+                    title = EXCLUDED.title,
+                    price = EXCLUDED.price,
+                    currency = EXCLUDED.currency,
+                    "convertedPrice" = EXCLUDED."convertedPrice",
+                    description = EXCLUDED.description,
+                    city = EXCLUDED.city,
+                    image = EXCLUDED.image,
+                    transaction = EXCLUDED.transaction,
+                    "updatedAt" = NOW();
+            """, (
+                listing["title"],
+                listing["price"],
+                listing["currency"],
+                listing["converted_price"],
+                listing["description"],
+                listing["city"],
+                listing["image"],
+                listing["link"],
+                listing["transaction"],
+                listing["source"]
+            ))
 
         conn.commit()
         print(f"[OK] {listing['title'][:60]}")
@@ -127,13 +156,11 @@ def run_scraper(max_pages=100):
         print(f"[INFO] Fetching offset {offset}...")
 
         # retry request
-        tries = 3
-        while tries:
+        for _ in range(3):
             try:
                 r = requests.get(url, timeout=10)
                 break
             except:
-                tries -= 1
                 time.sleep(1)
 
         if r.status_code != 200:

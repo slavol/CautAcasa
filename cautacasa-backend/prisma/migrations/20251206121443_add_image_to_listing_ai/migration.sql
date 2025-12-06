@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "ListingAI" ADD COLUMN     "image" TEXT,
+ALTER COLUMN "highlights" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "features" SET DEFAULT ARRAY[]::TEXT[];

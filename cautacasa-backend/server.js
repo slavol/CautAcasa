@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
+import listingsRouter from "./routes/listingsRoutes.js";
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ app.use(express.json());
 
 // === AUTH EXISTENT ===
 app.use("/api/auth", authRoutes);
+app.use("/api/listings", listingsRouter)
+
 
 
 // === START SERVER ===

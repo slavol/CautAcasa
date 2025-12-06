@@ -27,7 +27,7 @@ enum Role {
 
 model Listing {
   id             Int             @id @default(autoincrement())
-  title          String
+  title          String          @unique
   price          Int?
   description    String?
   city           String?
@@ -62,12 +62,14 @@ model ListingAI {
   transaction    TransactionType? 
   rooms          Int?
   summary        String?
-  highlights     String[]
-  features       String[]
+  highlights     String[]  @default([])
+  features       String[]  @default([])
   priceRON       Int?
   priceEUR       Int?
   city           String?
   zone           String?
+  image          String?   // 👈 AICI am adăugat imaginea
+  link           String? 
   isOwner        Boolean?
   qualityScore   Int?
   aiVersion      Int       @default(1)
