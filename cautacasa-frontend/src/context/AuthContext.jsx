@@ -31,6 +31,8 @@ export function AuthProvider({ children }) {
 
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+
+    window.location.href="/";
   };
 
   return (
