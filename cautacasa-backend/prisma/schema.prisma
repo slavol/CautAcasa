@@ -18,6 +18,8 @@ model User {
   otpExpiresAt  DateTime?
   role          Role         @default(USER)
   createdAt     DateTime     @default(now())
+
+  chatSessions  ChatSession[]
 }
 
 enum Role {
@@ -76,4 +78,28 @@ model ListingAI {
   updatedAt      DateTime  @updatedAt
 
   Listing Listing @relation(fields: [listingId], references: [id])
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+model ChatSession {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  user      User          @relation(fields: [userId], references: [id])
+  title     String?
+  createdAt DateTime      @default(now())
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id            Int       @id @default(autoincrement())
+  chatSessionId Int
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+  role          ChatRole
+  content       String      // textul complet al mesajului (JSON string la bot, dacă vrei)
+  metadata      Json?
+  createdAt     DateTime    @default(now())
 }

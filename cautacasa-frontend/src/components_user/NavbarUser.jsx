@@ -27,7 +27,7 @@ export default function UserNavbar() {
           {/* NAVIGATION LINKS */}
           <div className="hidden md:flex items-center gap-4">
             <Link
-              to="/ai-search"
+              to="/chat/list"
               className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-lg transition text-sm"
             >
               <RiRobot2Line size={18} />
@@ -37,7 +37,7 @@ export default function UserNavbar() {
 
           {/* AI BUTTON (mobile only) */}
           <Link
-            to="/ai-search"
+            to="/chat/list"
             className="md:hidden flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-full font-semibold shadow hover:shadow-lg transition text-sm"
           >
             <RiRobot2Line size={18} />

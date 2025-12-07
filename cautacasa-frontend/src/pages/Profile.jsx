@@ -114,6 +114,13 @@ export default function Profile() {
           <p className="text-blue-700 text-sm">
             Poți accesa istoricul conversatiilor cu inteligenta artificiala
           </p>
+          <button
+            onClick={() => navigate("/chat")}
+            className="w-full flex items-center gap-3 p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition"
+          >
+            💬
+            <span className="font-medium">Istoric conversații AI</span>
+          </button>
         </div>
       </div>
     </div>

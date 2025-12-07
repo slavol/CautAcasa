@@ -27,22 +27,6 @@ export default function UserDropdown({ user, closeMenu }) {
         👤 Profil
       </Link>
 
-      <Link
-        to="/ai-search"
-        className="block px-4 py-2 hover:bg-gray-100 text-gray-700 md:hidden"
-        onClick={closeMenu}
-      >
-        🤖 Căutare AI
-      </Link>
-
-      <Link
-        to="/listings"
-        className="block px-4 py-2 hover:bg-gray-100 text-gray-700 md:hidden"
-        onClick={closeMenu}
-      >
-        🔍 Căutare clasică
-      </Link>
-
       {user?.role === "ADMIN" && (
         <>
           <div className="border-t my-2"></div>
