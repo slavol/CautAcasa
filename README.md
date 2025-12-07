@@ -65,45 +65,13 @@ AI-ul deduce această informație din textul anunțului.
 
 Arhitectura este modulară și separată în 5 sisteme principale.
 
-═══════════════════════════════════════════════════════════════
-                    PRESENTATION LAYER  
-═══════════════════════════════════════════════════════════════
-Frontend (React + Vite)
-• Pages
-• Components
-• User/Chat/Admin interfaces
-• Axios API Gateway
-
-═══════════════════════════════════════════════════════════════
-                     APPLICATION LAYER  
-═══════════════════════════════════════════════════════════════
-Backend (Node.js + Express)
-• Authentication (JWT)
-• Listings API
-• AI Query API
-• Admin API (Scraper control, stats)
-• Chat API
-• Prisma ORM
-
-═══════════════════════════════════════════════════════════════
-                        DATA LAYER  
-═══════════════════════════════════════════════════════════════
-PostgreSQL (Prisma)
-• Listing
-• ListingAI
-• User
-• Chat
-• AiQueryLog
-• Statistics
-
-═══════════════════════════════════════════════════════════════
-                      DATA INGESTION LAYER  
-═══════════════════════════════════════════════════════════════
-Scraper (Python)
-• OLX API fetch
-• Normalize
-• LLM cleaning via Ollama (local)
-• Insert/Update database
+FRONTEND (React + Vite)
+   ↓ Axios
+BACKEND (Node.js + Express + Prisma)
+   ↓ PostgreSQL
+DATABASE (Listing, ListingAI, User, Chat, AiQueryLog)
+   ↑
+SCRAPER (Python + OLX API + Ollama AI Cleaner)
 
 ## **3. Lista modulelor + descriere**
 
