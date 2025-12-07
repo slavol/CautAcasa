@@ -71,7 +71,7 @@ model ListingAI {
   priceEUR       Int?
   city           String?
   zone           String?
-  image          String?   // 👈 AICI am adăugat imaginea
+  image          String?   
   link           String? 
   isOwner        Boolean?
   qualityScore   Int?
@@ -100,7 +100,7 @@ model ChatMessage {
   chatSessionId Int
   chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
   role          ChatRole
-  content       String      // textul complet al mesajului (JSON string la bot, dacă vrei)
+  content       String      
   metadata      Json?
   createdAt     DateTime    @default(now())
 }
@@ -111,10 +111,10 @@ model AiQueryLog {
   user      User     @relation(fields: [userId], references: [id])
 
   message   String
-  rooms     Int?       // extras automat din mesaj
-  propertyType String? // apartament, casa, garsoniera, vila etc.
-  transaction String?  // RENT / SALE
-  city      String?    // Bucuresti, Timisoara etc.
+  rooms     Int?       
+  propertyType String? 
+  transaction String?  
+  city      String?    
 
   createdAt DateTime @default(now())
 }

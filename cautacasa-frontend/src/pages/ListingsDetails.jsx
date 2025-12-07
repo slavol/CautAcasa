@@ -1,4 +1,3 @@
-// src/pages/ListingsDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UserNavbar from "../components_user/NavbarUser";
@@ -13,7 +12,6 @@ export default function ListingsDetails() {
 
   useEffect(() => {
     loadListing();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadListing = async () => {

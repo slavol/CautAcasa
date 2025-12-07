@@ -31,7 +31,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
     <AnimatePresence>
       {open && (
         <>
-          {/* BACKDROP */}
           <motion.div
             className="fixed inset-0 bg-black/40 z-40"
             onClick={onClose}
@@ -40,7 +39,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
             exit={{ opacity: 0 }}
           />
 
-          {/* DRAWER PANEL */}
           <motion.div
             className="
               fixed right-0 top-0 h-full w-80 max-w-full 
@@ -55,7 +53,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
 
             <div className="flex flex-col gap-4">
 
-              {/* SEARCH */}
               <div>
                 <label className="font-semibold text-sm">Căutare</label>
                 <input
@@ -69,7 +66,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 />
               </div>
 
-              {/* PROPERTY TYPE */}
               <div>
                 <label className="font-semibold text-sm">Tip proprietate</label>
                 <select
@@ -90,7 +86,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 </select>
               </div>
 
-              {/* TRANSACTION */}
               <div>
                 <label className="font-semibold text-sm">Tranzacție</label>
                 <select
@@ -106,7 +101,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 </select>
               </div>
 
-              {/* ROOMS */}
               <div>
                 <label className="font-semibold text-sm">Număr camere</label>
                 <div className="flex gap-2 mt-1">
@@ -131,7 +125,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 </div>
               </div>
 
-              {/* PRICE */}
               <div>
                 <label className="font-semibold text-sm">Preț (RON)</label>
                 <div className="flex gap-2 mt-1">
@@ -156,7 +149,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 </div>
               </div>
 
-              {/* ZONE */}
               <div>
                 <label className="font-semibold text-sm">Zonă</label>
                 <input
@@ -170,7 +162,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 />
               </div>
 
-              {/* OWNER */}
               <div className="mt-2">
                 <label className="font-semibold text-sm">Proprietar</label>
 
@@ -189,7 +180,6 @@ export default function FiltersDrawer({ open, onClose, filters, setFilters, relo
                 </div>
               </div>
 
-              {/* BUTTONS */}
               <div className="flex flex-col gap-3 mt-6">
                 <button
                   onClick={applyFilters}

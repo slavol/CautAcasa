@@ -1,4 +1,3 @@
-// routes/chat.js
 import express from "express";
 import prisma from "../config/prisma.js";
 import { authRequired } from "../middleware/authMiddleware.js";
@@ -7,9 +6,6 @@ import { extractAiFilters } from "../utils/aiextractor.js";
 
 const chatRouter = express.Router();
 
-/* -----------------------------------------------------
-   GET LISTA SESIUNI
------------------------------------------------------ */
 chatRouter.get("/list", authRequired, async (req, res) => {
   try {
     const sessions = await prisma.chatSession.findMany({
@@ -24,9 +20,6 @@ chatRouter.get("/list", authRequired, async (req, res) => {
   }
 });
 
-/* -----------------------------------------------------
-   GET MESAJE DINTR-O SESIUNE
------------------------------------------------------ */
 chatRouter.get("/:id/messages", authRequired, async (req, res) => {
   try {
     const chatId = Number(req.params.id);
@@ -53,9 +46,6 @@ chatRouter.get("/:id/messages", authRequired, async (req, res) => {
   }
 });
 
-/* -----------------------------------------------------
-   SEND A MESSAGE TO AI
------------------------------------------------------ */
 chatRouter.post("/send", authRequired, async (req, res) => {
   try {
     const { message, chatId } = req.body;
@@ -93,9 +83,6 @@ chatRouter.post("/send", authRequired, async (req, res) => {
       },
     });
 
-    /* -------------------------
-       PRELUARE LISTINGS PENTRU AI
-    -------------------------- */
     const listingAIs = await prisma.listingAI.findMany({
       include: { Listing: true },
       orderBy: { updatedAt: "desc" },
@@ -115,9 +102,6 @@ chatRouter.post("/send", authRequired, async (req, res) => {
       link: l.link || l.Listing.link,
     }));
 
-    /* -------------------------
-       EXECUTĂ MODELUL AI
-    -------------------------- */
     const aiResult = await rankListingsWithGemini({
       userQuery: message,
       listings: candidates,
@@ -130,17 +114,13 @@ chatRouter.post("/send", authRequired, async (req, res) => {
       include: { Listing: true },
     });
 
-    // SALVEAZĂ LOG INTEROGARE AI
     await prisma.aiQueryLog.create({
       data: {
         userId,
-        message, // întrebarea userului
+        message, 
       },
     });
 
-    /* -------------------------
-       SALVARE MESAJ AI + ANUNȚURI
-    -------------------------- */
     await prisma.chatMessage.create({
       data: {
         chatSessionId: session.id,
@@ -152,9 +132,6 @@ chatRouter.post("/send", authRequired, async (req, res) => {
       },
     });
 
-    // -----------------------------------------
-    // AI FILTER EXTRACTION → AI QUERY LOG SAVE
-    // -----------------------------------------
     try {
       const extracted = extractAiFilters(message);
 
@@ -173,9 +150,6 @@ chatRouter.post("/send", authRequired, async (req, res) => {
       console.error("AI Query extraction failed:", err);
     }
 
-    /* -------------------------
-       RĂSPUNS CĂTRE FRONTEND
-    -------------------------- */
     return res.json({
       chatId: session.id,
       replyText: aiResult.replyText,

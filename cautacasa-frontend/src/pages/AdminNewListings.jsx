@@ -71,7 +71,6 @@ export default function AdminNewListing() {
           Completează informațiile principale ale proprietății.
         </p>
 
-        {/* ALERTS */}
         {success && (
           <p className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg shadow">
             {success}
@@ -87,9 +86,6 @@ export default function AdminNewListing() {
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-2xl shadow-xl space-y-8 border border-gray-200"
         >
-          {/* ------------------------------ */}
-          {/* SECTION: DATE GENERALE */}
-          {/* ------------------------------ */}
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               📌 Informații Generale
@@ -97,7 +93,6 @@ export default function AdminNewListing() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* TITLU */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Titlu Anunț
@@ -112,7 +107,6 @@ export default function AdminNewListing() {
                 />
               </div>
 
-              {/* ORAȘ */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Oraș
@@ -126,7 +120,6 @@ export default function AdminNewListing() {
                 />
               </div>
 
-              {/* ZONĂ */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Zonă
@@ -140,7 +133,6 @@ export default function AdminNewListing() {
                 />
               </div>
 
-              {/* CAMERE */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Nr. Camere
@@ -155,7 +147,6 @@ export default function AdminNewListing() {
                 />
               </div>
 
-              {/* TRANZACȚIE */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Tranzacție
@@ -172,7 +163,6 @@ export default function AdminNewListing() {
                 </select>
               </div>
 
-              {/* TIP PROPRIETATE */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Tip Proprietate
@@ -195,16 +185,13 @@ export default function AdminNewListing() {
             </div>
           </div>
 
-          {/* ------------------------------ */}
-          {/* SECTION: PREȚURI */}
-          {/* ------------------------------ */}
+
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               💵 Prețuri
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* PREȚ EUR */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Preț EUR
@@ -218,7 +205,6 @@ export default function AdminNewListing() {
                 />
               </div>
 
-              {/* PREȚ RON */}
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
                   Preț RON
@@ -234,9 +220,6 @@ export default function AdminNewListing() {
             </div>
           </div>
 
-          {/* ------------------------------ */}
-          {/* SECTION: LINK & IMAGINE */}
-          {/* ------------------------------ */}
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               🔗 Link & Media
@@ -272,9 +255,6 @@ export default function AdminNewListing() {
             </div>
           </div>
 
-          {/* ------------------------------ */}
-          {/* SECTION: DESCRIERE */}
-          {/* ------------------------------ */}
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               📝 Descriere
@@ -288,7 +268,6 @@ export default function AdminNewListing() {
             />
           </div>
 
-          {/* SUBMIT BUTTON */}
           <div className="flex justify-end pt-4">
             <button
               disabled={loading}

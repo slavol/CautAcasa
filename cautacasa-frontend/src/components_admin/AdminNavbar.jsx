@@ -19,7 +19,6 @@ export default function AdminNavbar() {
   return (
     <nav className="w-full bg-gray-900/95 backdrop-blur-sm p-4 flex items-center justify-between shadow-lg border-b border-gray-800 sticky top-0 z-50">
       
-      {/* LEFT SIDE: TITLE + BACK BUTTON */}
       <div className="flex items-center gap-6">
         <div className="text-2xl font-semibold text-white tracking-wide">
           🔧 Admin Panel
@@ -34,7 +33,6 @@ export default function AdminNavbar() {
         </Link>
       </div>
 
-      {/* RIGHT SIDE: NAVIGATION + LOGOUT */}
       <div className="flex items-center gap-3">
         <Link className={`px-4 py-2 rounded-xl transition-all ${isActive("/admin/dashboard")}`} to="/admin/dashboard">
           Dashboard
@@ -56,7 +54,6 @@ export default function AdminNavbar() {
           Scraper
         </Link>
 
-        {/* LOGOUT BUTTON */}
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 ml-3 px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 shadow-md transition-all"

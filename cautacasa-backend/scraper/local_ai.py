@@ -10,7 +10,7 @@ def ollama_generate(model, prompt):
         "model": model,
         "prompt": prompt,
         "stream": False,
-        "format": "json"  # 👈 OBLIGATORIU
+        "format": "json"  
     }
 
     try:

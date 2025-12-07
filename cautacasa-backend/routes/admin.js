@@ -1,4 +1,3 @@
-// routes/admin.js
 import express from "express";
 import prisma from "../config/prisma.js";
 import { authRequired, adminRequired } from "../middleware/authMiddleware.js";
@@ -8,47 +7,38 @@ import fs from "fs";
 
 const adminRouter = express.Router();
 
-// toate rutele de aici necesită user logat + admin
 adminRouter.use(authRequired, adminRequired);
 
-/* =====================================================
-   1) STATISTICI AI – Dashboard complet
-===================================================== */
 
 adminRouter.get("/stats/ai", async (req, res) => {
   try {
-    // Total interogări AI
     const totalQueries = await prisma.aiQueryLog.count();
 
-    // GroupBy Rooms
     const roomsStats = await prisma.aiQueryLog.groupBy({
       by: ["rooms"],
       _count: { _all: true },
       where: { rooms: { not: null } }
     });
 
-    // GroupBy Property Type
     const propertyStats = await prisma.aiQueryLog.groupBy({
       by: ["propertyType"],
       _count: { _all: true },
       where: { propertyType: { not: null } }
     });
 
-    // GroupBy Transaction
+
     const transactionStats = await prisma.aiQueryLog.groupBy({
       by: ["transaction"],
       _count: { _all: true },
       where: { transaction: { not: null } }
     });
 
-    // GroupBy City
     const cityStats = await prisma.aiQueryLog.groupBy({
       by: ["city"],
       _count: { _all: true },
       where: { city: { not: null } }
     });
 
-    // formatăm pentru frontend
     return res.json({
       totalQueries,
       topRooms: roomsStats
@@ -74,11 +64,6 @@ adminRouter.get("/stats/ai", async (req, res) => {
   }
 });
 
-/* =====================================================
-   2) ADMINISTRARE LISTINGS AI – CRUD + filtre
-===================================================== */
-
-// GET /api/admin/listings-ai
 adminRouter.get("/listings-ai", async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -139,10 +124,6 @@ adminRouter.get("/listings-ai", async (req, res) => {
   }
 });
 
-// CREATE LISTING AI
-// POST /admin/listings-ai
-// POST /api/admin/listings-ai
-// POST /api/admin/listings-ai
 adminRouter.post("/listings-ai", async (req, res) => {
   try {
     const {
@@ -159,7 +140,6 @@ adminRouter.post("/listings-ai", async (req, res) => {
       image
     } = req.body;
 
-    // 1️⃣ Creează Listing original (obligatoriu pentru relația 1-1)
     const listing = await prisma.listing.create({
       data: {
         title: cleanTitle || "Fără titlu",
@@ -167,17 +147,13 @@ adminRouter.post("/listings-ai", async (req, res) => {
         city: city || "",
         image: image || null,
         link: link || "",
-
-        // 🔥 AICI TREBUIE EXACT CE PERMITE ENUMUL
         source: "OLX",
-
         transaction: transaction || "UNKNOWN",
         price: priceEUR ? Number(priceEUR) : null,
         currency: "EUR"
       }
     });
 
-    // 2️⃣ Creează ListingAI legat de Listing
     const created = await prisma.listingAI.create({
       data: {
         listingId: listing.id,
@@ -203,7 +179,6 @@ adminRouter.post("/listings-ai", async (req, res) => {
   }
 });
 
-// UPDATE LISTING AI
 adminRouter.put("/listings-ai/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -211,7 +186,6 @@ adminRouter.put("/listings-ai/:id", async (req, res) => {
       return res.status(400).json({ error: "Invalid id" });
     }
 
-    // ❗ EXTRAGEM DOAR CÂMPURILE PERMISE
     const {
       cleanTitle,
       propertyType,
@@ -256,7 +230,6 @@ adminRouter.put("/listings-ai/:id", async (req, res) => {
   }
 });
 
-// DELETE LISTING AI
 adminRouter.delete("/listings-ai/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -272,9 +245,6 @@ adminRouter.delete("/listings-ai/:id", async (req, res) => {
   }
 });
 
-/* =====================================================
-   3) SCRAPER SIMULATOR (provizoriu)
-===================================================== */
 
 let currentScraperJob = {
   running: false,

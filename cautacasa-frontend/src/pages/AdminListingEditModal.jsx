@@ -24,7 +24,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
 
-        {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Editează Anunț #{item.id}</h2>
           <button
@@ -35,10 +34,8 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
           </button>
         </div>
 
-        {/* FORM */}
         <div className="grid grid-cols-2 gap-4">
 
-          {/* TITLE */}
           <div className="col-span-2">
             <label className="font-semibold">Titlu Curățat</label>
             <input
@@ -48,7 +45,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* PROPERTY TYPE */}
           <div>
             <label className="font-semibold">Tip proprietate</label>
             <select
@@ -66,7 +62,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             </select>
           </div>
 
-          {/* TRANSACTION */}
           <div>
             <label className="font-semibold">Tranzacție</label>
             <select
@@ -80,7 +75,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             </select>
           </div>
 
-          {/* ROOMS */}
           <div>
             <label className="font-semibold">Număr camere</label>
             <input
@@ -91,7 +85,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* CITY */}
           <div>
             <label className="font-semibold">Oraș</label>
             <input
@@ -101,7 +94,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* ZONE */}
           <div>
             <label className="font-semibold">Zonă</label>
             <input
@@ -111,7 +103,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* PRICE RON */}
           <div>
             <label className="font-semibold">Preț (RON)</label>
             <input
@@ -124,7 +115,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* PRICE EUR */}
           <div>
             <label className="font-semibold">Preț (EUR)</label>
             <input
@@ -137,7 +127,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* IMAGE */}
           <div className="col-span-2">
             <label className="font-semibold">Imagine (URL)</label>
             <input
@@ -153,7 +142,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             )}
           </div>
 
-          {/* LINK */}
           <div className="col-span-2">
             <label className="font-semibold">Link</label>
             <input
@@ -163,7 +151,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* SUMMARY */}
           <div className="col-span-2">
             <label className="font-semibold">Descriere</label>
             <textarea
@@ -174,7 +161,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             />
           </div>
 
-          {/* OWNER */}
           <div>
             <label className="font-semibold">Este proprietar?</label>
             <select
@@ -190,7 +176,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
             </select>
           </div>
 
-          {/* QUALITY SCORE */}
           <div>
             <label className="font-semibold">Scor Calitate AI</label>
             <input
@@ -204,7 +189,6 @@ export default function AdminListingEditModal({ item, onClose, onSave }) {
           </div>
         </div>
 
-        {/* FOOTER BUTTONS */}
         <div className="flex justify-end gap-4 mt-6">
           <button
             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"

@@ -12,7 +12,6 @@ export default function Listings() {
 
   const navigate = useNavigate();
 
-  // FILTRE
   const [filters, setFilters] = useState({
     q: "",
     priceMin: "",
@@ -24,38 +23,30 @@ export default function Listings() {
     isOwner: "",
   });
 
-  // LOAD FIRST PAGE
   useEffect(() => {
     applyFilters(1);
   }, []);
 
-  // PAGINATION BUTTON GENERATOR (perfect version)
   const getPaginationButtons = () => {
     const buttons = new Set();
 
-    // Always show page 1
     buttons.add(1);
 
-    // Left dots
     if (page > 4) buttons.add("leftDots");
 
-    // Pages around current
     for (let i = page - 2; i <= page + 2; i++) {
       if (i > 1 && i < totalPages) {
         buttons.add(i);
       }
     }
 
-    // Right dots
     if (page < totalPages - 3) buttons.add("rightDots");
 
-    // Always show last page
     if (totalPages > 1) buttons.add(totalPages);
 
     return Array.from(buttons);
   };
 
-  // APPLY FILTERS + PAGINATION
   const applyFilters = async (newPage = 1) => {
     try {
       setLoading(true);
@@ -86,7 +77,6 @@ export default function Listings() {
     }
   };
 
-  // RESET FILTERS
   const resetFilters = () => {
     setFilters({
       q: "",
@@ -101,13 +91,11 @@ export default function Listings() {
     applyFilters(1);
   };
 
-  // FILTER UI ABOVE LISTINGS
   const FiltersUI = () => (
     <div className="bg-white p-6 shadow rounded-xl mb-6">
       <h3 className="text-xl font-bold mb-4">Filtre</h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {/* SEARCH */}
         <div className="col-span-1 sm:col-span-2">
           <label className="text-sm font-medium">Căutare</label>
           <input
@@ -119,7 +107,6 @@ export default function Listings() {
           />
         </div>
 
-        {/* PRICE MIN */}
         <div>
           <label className="text-sm font-medium">Preț minim</label>
           <input
@@ -132,7 +119,6 @@ export default function Listings() {
           />
         </div>
 
-        {/* PRICE MAX */}
         <div>
           <label className="text-sm font-medium">Preț maxim</label>
           <input
@@ -145,7 +131,6 @@ export default function Listings() {
           />
         </div>
 
-        {/* ROOMS MIN */}
         <div>
           <label className="text-sm font-medium">Camere minime</label>
           <input
@@ -158,7 +143,6 @@ export default function Listings() {
           />
         </div>
 
-        {/* ROOMS MAX */}
         <div>
           <label className="text-sm font-medium">Camere maxime</label>
           <input
@@ -171,7 +155,6 @@ export default function Listings() {
           />
         </div>
 
-        {/* PROPERTY TYPE */}
         <div>
           <label className="text-sm font-medium">Tip proprietate</label>
           <select
@@ -191,7 +174,6 @@ export default function Listings() {
           </select>
         </div>
 
-        {/* TRANSACTION */}
         <div>
           <label className="text-sm font-medium">Tranzacție</label>
           <select
@@ -207,7 +189,6 @@ export default function Listings() {
           </select>
         </div>
 
-        {/* OWNER */}
         <div>
           <label className="text-sm font-medium">Vânzător</label>
           <select
@@ -257,7 +238,6 @@ export default function Listings() {
           </p>
         ) : (
           <>
-            {/* LISTINGS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {listings.map((l) => (
                 <div
@@ -288,10 +268,8 @@ export default function Listings() {
               ))}
             </div>
 
-            {/* PAGINATION */}
             <div className="flex gap-2 mt-10 justify-center items-center flex-wrap">
 
-              {/* PREVIOUS */}
               <button
                 disabled={page === 1}
                 onClick={() => page > 1 && applyFilters(page - 1)}
@@ -304,7 +282,6 @@ export default function Listings() {
                 Previous
               </button>
 
-              {/* NUMBERED BUTTONS */}
               {getPaginationButtons().map((p, index) => {
                 if (p === "leftDots" || p === "rightDots") {
                   return (
@@ -329,7 +306,6 @@ export default function Listings() {
                 );
               })}
 
-              {/* NEXT */}
               <button
                 disabled={page === totalPages}
                 onClick={() => page < totalPages && applyFilters(page + 1)}

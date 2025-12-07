@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function Login() {
-  const { login } = useAuth();               // 🔥 FIX: folosim hook-ul direct
+  const { login } = useAuth();               
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -27,17 +27,14 @@ export default function Login() {
       return;
     }
 
-    // salvăm user + token în context
     login(res.data.user, res.data.token);
 
-    // 👇 Verificăm câmpul trimis de backend
     if (!res.data.user.phoneVerified) {
-      // Dacă telefonul NU e verificat → mergem la pagina de verificare
       navigate("/verify-phone");
       return;
     }
 
-    // Dacă telefonul este verificat → mergem la listings
+
     navigate("/listings");
   } catch (err) {
     alert(err.response?.data?.message || "Eroare de autentificare.");

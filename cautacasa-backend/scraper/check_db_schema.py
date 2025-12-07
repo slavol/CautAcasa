@@ -1,7 +1,6 @@
 import psycopg2
 import os
 
-# Expected schema from Prisma (edit if you add/remove fields)
 EXPECTED_COLUMNS = {
     "id": {"type": "integer", "nullable": False},
     "title": {"type": "text", "nullable": False},
@@ -66,11 +65,9 @@ def main():
             print(f" ⚠ EXTRA COLUMN in DB: {name}\n")
             continue
 
-        # Compare column type
         if expected["type"] != pg_type:
             print(f" ❌ TYPE MISMATCH: expected {expected['type']} but got {pg_type}")
 
-        # Compare nullability
         if expected["nullable"] != is_nullable:
             print(f" ❌ NULLABILITY MISMATCH: expected nullable={expected['nullable']}")
 

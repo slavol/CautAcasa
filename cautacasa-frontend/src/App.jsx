@@ -14,7 +14,6 @@ import ChatRoom from "./pages/ChatRoom.jsx";
 
 import { AuthProvider } from "./context/AuthContext";
 
-// 🌟 ADMIN IMPORTS
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminListings from "./pages/AdminListings.jsx";
 import AdminListingsIncomplete from "./pages/AdminIncompleteListings.jsx";
@@ -29,21 +28,17 @@ export default function App() {
       <BrowserRouter>
         <Routes>
 
-          {/* PUBLIC */}
           <Route path="/" element={<Dashboard />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-phone" element={<VerifyPhone />} />
           <Route path="/login" element={<Login />} />
 
-          {/* LISTINGS */}
           <Route path="/listings" element={<Listings />} />
           <Route path="/listings/:id" element={<ListingsDetails />} />
 
-          {/* CHAT */}
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />
 
-          {/* USER PROFILE */}
           <Route
             path="/profile"
             element={
@@ -53,9 +48,7 @@ export default function App() {
             }
           />
 
-          {/* =======================
-    🔥 ADMIN ROUTES 🔥
-======================= */}
+
           <Route
             path="/admin/dashboard"
             element={

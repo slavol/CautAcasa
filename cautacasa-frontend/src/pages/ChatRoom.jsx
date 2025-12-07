@@ -49,7 +49,6 @@ export default function ChatRoom() {
         chatId: chatId || null,
       });
 
-      // Dacă e o sesiune nouă → schimbă URL-ul
       if (!chatId && res.data.chatId) {
         window.history.replaceState(null, "", `/chat/${res.data.chatId}`);
       }
@@ -72,7 +71,6 @@ export default function ChatRoom() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <UserNavbar />
 
-      {/* CHAT WINDOW */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         <div className="max-w-3xl mx-auto space-y-4">
           {messages.map((m, i) => (
@@ -88,7 +86,6 @@ export default function ChatRoom() {
         </div>
       </div>
 
-      {/* INPUT BAR */}
       <div className="border-t bg-white p-4 sticky bottom-0">
         <div className="max-w-3xl mx-auto flex gap-3">
           <input
@@ -124,7 +121,6 @@ function ChatBubble({ message }) {
       >
         {message.content}
 
-        {/* LISTINGS */}
         {message.listings?.length > 0 && (
           <div className="mt-4 space-y-3">
             {message.listings.map((l) => (

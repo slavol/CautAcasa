@@ -6,10 +6,8 @@ export default function ProtectedAdminRoute({ children }) {
 
   if (loading) return <div>Loading...</div>;
 
-  // dacă nu e logat → redirect la login
   if (!user) return <Navigate to="/login" />;
 
-  // dacă nu e admin → redirect la home
   if (!user.isAdmin) return <Navigate to="/" />;
 
   return children;

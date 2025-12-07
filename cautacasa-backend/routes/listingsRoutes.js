@@ -3,7 +3,6 @@ import prisma from "../config/prisma.js";
 
 const listingsRouter = express.Router();
 
-// BASIC GET / (optional filters)
 listingsRouter.get("/", async (req, res) => {
   const { city, rooms, priceMin, priceMax } = req.query;
 
@@ -26,7 +25,6 @@ listingsRouter.get("/", async (req, res) => {
   res.json(data);
 });
 
-// GET /:id
 listingsRouter.get("/:id", async (req, res) => {
   const id = Number(req.params.id);
 
@@ -56,7 +54,6 @@ listingsRouter.post("/filter", async (req, res) => {
 
     const filters = {};
 
-    // SEARCH
     if (q && q.trim() !== "") {
       filters.OR = [
         { cleanTitle: { contains: q.trim(), mode: "insensitive" } },
@@ -64,31 +61,26 @@ listingsRouter.post("/filter", async (req, res) => {
       ];
     }
 
-    // PRICE FILTER (EUR)
     if (priceMin || priceMax) {
       filters.priceEUR = {};
       if (priceMin) filters.priceEUR.gte = Number(priceMin);
       if (priceMax) filters.priceEUR.lte = Number(priceMax);
     }
 
-    // ROOMS
     if (roomsMin || roomsMax) {
       filters.rooms = {};
       if (roomsMin) filters.rooms.gte = Number(roomsMin);
       if (roomsMax) filters.rooms.lte = Number(roomsMax);
     }
 
-    // PROPERTY TYPE
     if (propertyType) filters.propertyType = propertyType;
 
-    // TRANSACTION
+
     if (transaction) filters.transaction = transaction;
 
-    // OWNER
     if (isOwner === "true") filters.isOwner = true;
     if (isOwner === "false") filters.isOwner = false;
 
-    // PAGINATION
     const skip = (Number(page) - 1) * Number(limit);
 
     const [listings, total] = await Promise.all([

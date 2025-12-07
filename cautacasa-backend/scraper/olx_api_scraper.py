@@ -3,9 +3,6 @@ import psycopg2
 import time
 import os
 
-# ---------------------------------------
-# PostgreSQL connection
-# ---------------------------------------
 def get_connection():
     return psycopg2.connect(
         dbname=os.environ.get("POSTGRES_DB", "cautacasa"),
@@ -15,35 +12,23 @@ def get_connection():
         port=os.environ.get("POSTGRES_PORT", "5432")
     )
 
-# ---------------------------------------
-# Fix OLX image URL
-# ---------------------------------------
 def fix_olx_image(url, width=800, height=600):
     if not url:
         return None
     return url.replace("{width}", str(width)).replace("{height}", str(height))
 
-# ---------------------------------------
-# Fix OLX listing link
-# ---------------------------------------
 def fix_olx_link(link):
     if not link:
         return None
 
-    # 1. elimină dublurile gen "https://www.olx.rohttps://www.olx.ro/..."
     if link.count("https://www.olx.ro") > 1:
         return "https://www.olx.ro" + link.split("https://www.olx.ro")[-1]
 
-    # 2. dacă e relativ de forma "/d/oferta/..."
     if link.startswith("/"):
         return "https://www.olx.ro" + link
 
-    # 3. altfel, dacă deja începe corect
     return link
 
-# ---------------------------------------
-# Price extraction
-# ---------------------------------------
 def extract_price(item):
     for p in item.get("params", []):
         if p.get("key") == "price" and p.get("value"):
@@ -55,9 +40,6 @@ def extract_price(item):
             )
     return None, None, None
 
-# ---------------------------------------
-# Transaction extraction
-# ---------------------------------------
 def extract_transaction(item):
     slug = item.get("category", {}).get("slug", "").lower()
 
@@ -67,9 +49,6 @@ def extract_transaction(item):
         return "SALE"
     return "UNKNOWN"
 
-# ---------------------------------------
-# Parse JSON item → dict
-# ---------------------------------------
 def parse_listing(item):
     price, currency, converted_price = extract_price(item)
 
@@ -94,9 +73,6 @@ def parse_listing(item):
         "source": "OLX"
     }
 
-# ---------------------------------------
-# SAFE INSERT with per-row commit
-# ---------------------------------------
 def insert_listing(conn, listing):
     try:
         with conn.cursor() as cur:
@@ -137,9 +113,6 @@ def insert_listing(conn, listing):
         print("[DB ERROR]", e)
 
 
-# ---------------------------------------
-# Main scraper
-# ---------------------------------------
 def run_scraper(max_pages=100):
     print("=== STARTING OLX API SCRAPER ===")
 
@@ -155,7 +128,6 @@ def run_scraper(max_pages=100):
 
         print(f"[INFO] Fetching offset {offset}...")
 
-        # retry request
         for _ in range(3):
             try:
                 r = requests.get(url, timeout=10)

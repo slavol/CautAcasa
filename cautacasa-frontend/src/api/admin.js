@@ -1,4 +1,3 @@
-// src/api/admin.js
 import axios from "axios";
 import API_BASE_URL from "../config/api";
 
@@ -7,10 +6,9 @@ const ADMIN_API = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// 👉 ADĂUGĂ TOKEN-UL LA FIECARE REQUEST
 ADMIN_API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // token-ul de login
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,14 +17,8 @@ ADMIN_API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-/* ============================================
-   1) AI STATISTICS
-============================================ */
 export const getAdminAiStats = () => ADMIN_API.get("/stats/ai");
 
-/* ============================================
-   2) LISTINGS AI (CRUD + filters)
-============================================ */
 
 export const getAdminListingsAI = (options = {}) => {
   const params = new URLSearchParams();
@@ -47,9 +39,6 @@ export const updateListingAI = (id, data) =>
 export const deleteListingAI = (id) =>
   ADMIN_API.delete(`/listings-ai/${id}`);
 
-/* ============================================
-   3) SCRAPER CONTROL
-============================================ */
 
 export const startScraper = () => ADMIN_API.post("/scraper/start");
 

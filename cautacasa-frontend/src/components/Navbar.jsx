@@ -8,7 +8,6 @@ export default function Navbar() {
     <nav className="w-full fixed top-0 left-0 z-50 bg-white/70 backdrop-blur-lg border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
 
-        {/* Logo */}
         <motion.a
           href="/"
           initial={{ opacity: 0, y: -20 }}
@@ -19,10 +18,8 @@ export default function Navbar() {
           Caut<span className="text-blue-600">Acasă</span>
         </motion.a>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">
 
-          {/* LOGIN BUTTON */}
           <a
             href="/login"
             className="px-5 py-2 border border-gray-300 rounded-xl text-gray-800 hover:bg-gray-100 font-medium transition"
@@ -30,7 +27,6 @@ export default function Navbar() {
             Login
           </a>
 
-          {/* REGISTER BUTTON */}
           <a
             href="/register"
             className="px-5 py-2 bg-blue-600 text-white rounded-xl text-lg font-semibold hover:bg-blue-700 transition"
@@ -39,7 +35,6 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile Hamburger Button */}
         <button
           className="md:hidden text-gray-800"
           onClick={() => setOpen(!open)}
@@ -56,7 +51,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Dropdown */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -68,7 +62,6 @@ export default function Navbar() {
           >
             <div className="flex flex-col gap-4">
 
-              {/* LOGIN MOBILE */}
               <a
                 href="/login"
                 onClick={() => setOpen(false)}
@@ -77,7 +70,6 @@ export default function Navbar() {
                 Login
               </a>
 
-              {/* REGISTER MOBILE */}
               <a
                 href="/register"
                 onClick={() => setOpen(false)}

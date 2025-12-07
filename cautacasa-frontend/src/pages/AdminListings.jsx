@@ -37,7 +37,6 @@ export default function AdminListings() {
 
   useEffect(() => {
     loadListings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const handleSearchChange = (e) => {
@@ -87,7 +86,6 @@ export default function AdminListings() {
           posibilitatea de ștergere, editare și filtrare locală după titlu.
         </p>
 
-        {/* SEARCH BAR */}
         <div className="mt-2 flex gap-3 items-center">
           <input
             type="text"
@@ -101,7 +99,6 @@ export default function AdminListings() {
           </span>
         </div>
 
-        {/* TABLE */}
         <div className="mt-6 bg-white shadow-lg rounded-lg overflow-hidden">
           <table className="w-full border-collapse text-left">
             <thead className="bg-gray-100 text-gray-700 uppercase text-sm">
@@ -160,7 +157,6 @@ export default function AdminListings() {
           </table>
         </div>
 
-        {/* PAGINATION */}
         <div className="flex items-center justify-center gap-4 mt-6">
           <button
             disabled={page <= 1}
@@ -184,7 +180,6 @@ export default function AdminListings() {
         </div>
       </div>
 
-      {/* EDIT MODAL */}
       {editingItem && (
         <AdminListingEditModal
           item={editingItem}

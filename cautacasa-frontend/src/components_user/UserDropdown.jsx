@@ -14,7 +14,6 @@ export default function UserDropdown({ user, closeMenu }) {
       "
       style={{ animation: "fadeIn 0.15s ease-out" }}
     >
-      {/* NAME */}
       <p className="px-4 py-2 text-gray-800 font-semibold border-b">
         {user?.name}
       </p>

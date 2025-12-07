@@ -6,22 +6,15 @@ import { rankListingsWithGemini } from "../ai/rankListings.js";
 const aiRouter = express.Router();
 const prisma = new PrismaClient();
 
-/**
- * POST /api/ai/chat
- * Trimite un mesaj AI + salvează conversația într-o sesiune
- */
 aiRouter.post("/chat", authRequired, async (req, res) => {
   try {
-    const userId = req.user.id; // vine automat din authRequired
+    const userId = req.user.id; 
     const { message, chatId } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: "message este obligatoriu" });
     }
 
-    // -------------------------------------------------------------------
-    // 1) PRELUĂM LISTINGURILE CANDIDATE
-    // -------------------------------------------------------------------
     const listingAIs = await prisma.listingAI.findMany({
       take: 100,
       include: { Listing: true },
@@ -41,9 +34,6 @@ aiRouter.post("/chat", authRequired, async (req, res) => {
       link: l.link || l.Listing.link,
     }));
 
-    // -------------------------------------------------------------------
-    // 2) CEREM GEMINI SĂ RANKUIASCĂ ANUNȚURILE
-    // -------------------------------------------------------------------
     const aiResult = await rankListingsWithGemini({
       userQuery: message,
       listings: candidates,
@@ -55,9 +45,6 @@ aiRouter.post("/chat", authRequired, async (req, res) => {
       topIds.includes(l.listingId)
     );
 
-    // -------------------------------------------------------------------
-    // 3) GĂSIM SAU CREĂM SESIUNEA DE CHAT
-    // -------------------------------------------------------------------
     let session = null;
 
     if (chatId) {
@@ -78,9 +65,6 @@ aiRouter.post("/chat", authRequired, async (req, res) => {
       });
     }
 
-    // -------------------------------------------------------------------
-    // 4) SALVĂM MESAJUL USERULUI
-    // -------------------------------------------------------------------
     await prisma.chatMessage.create({
       data: {
         chatSessionId: session.id,
@@ -89,14 +73,11 @@ aiRouter.post("/chat", authRequired, async (req, res) => {
       }
     });
 
-    // -------------------------------------------------------------------
-    // 5) SALVĂM MESAJUL AI + LISTINGS ÎN METADATA
-    // -------------------------------------------------------------------
     await prisma.chatMessage.create({
       data: {
         chatSessionId: session.id,
         role: "ASSISTANT",
-        content: aiResult.replyText, // DOAR text curat
+        content: aiResult.replyText, 
 
         metadata: {
           topListings: aiResult.topListings,
@@ -111,9 +92,6 @@ aiRouter.post("/chat", authRequired, async (req, res) => {
       },
     });
 
-    // -------------------------------------------------------------------
-    // 6) RĂSPUNDEM LA FRONTEND
-    // -------------------------------------------------------------------
     return res.json({
       chatId: session.id,
       replyText: aiResult.replyText,

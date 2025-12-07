@@ -3,7 +3,7 @@ import time
 import psycopg2
 import json
 from db import get_db
-from local_ai import ollama_generate  # folosește format=json în acest fișier!
+from local_ai import ollama_generate  
 
 MODEL = "qwen2.5:7b-instruct"
 
@@ -37,9 +37,6 @@ Respectă REGULILE STRICTE IMOBILIARE.
 Returnezi STRICT un singur obiect JSON VALID.
 """
 
-# ============================================================
-# Helpers
-# ============================================================
 
 def fix_olx_image(url, width=800, height=600):
     if not url:
@@ -51,11 +48,9 @@ def fix_olx_link(link):
     if not link:
         return None
 
-    # Elimină dublurile: "https://www.olx.rohttps://www.olx.ro/..."
     if link.count("https://www.olx.ro") > 1:
         return "https://www.olx.ro" + link.split("https://www.olx.ro")[-1]
 
-    # Dacă link-ul e relativ
     if link.startswith("/"):
         return "https://www.olx.ro" + link
 
@@ -73,9 +68,6 @@ PRICE: {listing['price']} {listing['currency']}
 PRICE_RON: {listing['converted_price']}
 """
 
-# ============================================================
-# ENUM TRANSACTION FIX
-# ============================================================
 
 def normalize_transaction(value):
     if not value:
@@ -87,7 +79,7 @@ def normalize_transaction(value):
     has_sale = "SALE" in v
 
     if has_rent and has_sale:
-        return None   # sau poți pune "SALE" ca fallback
+        return None   
 
     if has_rent:
         return "RENT"
@@ -98,9 +90,6 @@ def normalize_transaction(value):
     return None
 
 
-# ============================================================
-# Normalize JSON response from AI
-# ============================================================
 
 def normalize(ai):
     return {
@@ -121,9 +110,6 @@ def normalize(ai):
     }
 
 
-# ============================================================
-# Request AI
-# ============================================================
 
 def process_listing(listing, retries=3):
     prompt = build_prompt(listing)
@@ -147,9 +133,6 @@ def process_listing(listing, retries=3):
     return None
 
 
-# ============================================================
-# Main logic
-# ============================================================
 
 def process_all_listings():
     conn = get_db()

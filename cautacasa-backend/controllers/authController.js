@@ -1,10 +1,8 @@
-// src/controllers/authcontroller.js
 import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateOTP } from "../utils/generateOTP.js";
 
-// REGISTER
 export const register = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -32,7 +30,6 @@ export const register = async (req, res) => {
       }
     });
 
-    // GENERARE TOKEN LA REGISTER ❗
     const token = jwt.sign(
       { id: user.id, role: user.role, phoneVerified: false },
       process.env.JWT_SECRET,
@@ -51,7 +48,7 @@ OTP: ${otp}
 
     res.status(201).json({
       message: "Cont creat. Introdu codul OTP.",
-      token, // ➜ TOKEN trimis la frontend
+      token, 
       user: {
         id: user.id,
         name: user.name,
@@ -68,7 +65,6 @@ OTP: ${otp}
   }
 };
 
-// LOGIN
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;

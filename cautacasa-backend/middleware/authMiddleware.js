@@ -13,7 +13,7 @@ export const authRequired = async (req, res, next) => {
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
     if (!user) return res.status(401).json({ message: "Invalid token." });
 
-    req.user = user; // atașăm userul în request
+    req.user = user;
     next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized." });

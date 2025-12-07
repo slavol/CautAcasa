@@ -70,7 +70,6 @@ export default function FeatureCards() {
             viewport={{ once: true }}
             className="p-10 bg-gray-50 border border-gray-200 rounded-3xl shadow hover:shadow-xl transition flex flex-col items-center"
           >
-            {/* ICON WRAPPER */}
             <div className="w-24 h-24 flex items-center justify-center rounded-2xl bg-blue-50 border border-blue-200 shadow-sm mb-6">
               {feature.icon}
             </div>

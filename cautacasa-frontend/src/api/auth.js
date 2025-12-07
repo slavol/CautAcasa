@@ -1,4 +1,3 @@
-// src/api/auth.js
 import axios from "axios";
 import API_BASE_URL from "../config/api";
 
@@ -7,10 +6,8 @@ const API = axios.create({
   headers: { "Content-Type": "application/json" }
 });
 
-// REGISTER — returnează token
 export const registerUser = (data) => API.post("/register", data);
 
-// VERIFY PHONE — necesită token
 export const verifyPhone = (data) =>
   API.post("/verify-phone", data, {
     headers: {

@@ -1,11 +1,8 @@
-// utils/aiExtractor.js
 
 export function extractAiFilters(message) {
   const text = message.toLowerCase();
 
-  /* ================================================
-     1) ROOMS (camere)
-  ================================================= */
+
   let rooms = null;
 
   const roomPatterns = [
@@ -23,9 +20,6 @@ export function extractAiFilters(message) {
     }
   }
 
-  /* ================================================
-     2) TRANSACTION (rent / sale)
-  ================================================= */
   let transaction = null;
 
   if (/inchiri/.test(text) || /închiri/.test(text)) {
@@ -34,9 +28,6 @@ export function extractAiFilters(message) {
     transaction = "SALE";
   }
 
-  /* ================================================
-     3) PROPERTY TYPE (apartament, casa, vila etc.)
-  ================================================= */
   let propertyType = null;
 
   if (/apart/.test(text)) propertyType = "APARTMENT";
@@ -45,9 +36,6 @@ export function extractAiFilters(message) {
   else if (/cas(a|ă)/.test(text)) propertyType = "HOUSE";
   else if (/vil(a|ă)/.test(text)) propertyType = "VILLA";
 
-  /* ================================================
-     4) CITY (Bucuresti, Cluj etc.)
-  ================================================= */
   const knownCities = [
     "bucuresti",
     "bucurești",
@@ -74,9 +62,6 @@ export function extractAiFilters(message) {
     }
   }
 
-  /* ================================================
-     ✔ RETURN STRUCTURED RESULT
-  ================================================= */
   return {
     rooms,
     transaction,

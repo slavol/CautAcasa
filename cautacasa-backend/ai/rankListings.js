@@ -1,12 +1,10 @@
-// ai/rankListings.js
 import { geminiModel } from './geminiClient.js';
 
-// utilitar ca să fim siguri că prindem JSON-ul chiar dacă vine cu ```json ... ```
+
 function extractJson(text) {
   try {
     return JSON.parse(text);
   } catch {
-    // încearcă să scoți ce e între ```json ... ```
     const match = text.match(/```json([\s\S]*?)```/i) || text.match(/```([\s\S]*?)```/i);
     if (match && match[1]) {
       return JSON.parse(match[1].trim());
@@ -15,11 +13,7 @@ function extractJson(text) {
   }
 }
 
-/**
- * @param {Object} params
- * @param {string} params.userQuery - mesajul utilizatorului
- * @param {Array} params.listings  - anunțuri candidate (id, title, description, etc.)
- */
+
 export async function rankListingsWithGemini({ userQuery, listings }) {
   const prompt = `
 Ești un asistent pentru recomandări imobiliare în România.
@@ -67,10 +61,9 @@ ${JSON.stringify(listings, null, 2)}
 
   const json = extractJson(text);
 
-  // validare minimă
   if (!json.replyText || !Array.isArray(json.topListings)) {
     throw new Error('JSON invalid de la model: lipsesc replyText sau topListings');
   }
 
-  return json; // { replyText, topListings }
+  return json;
 }

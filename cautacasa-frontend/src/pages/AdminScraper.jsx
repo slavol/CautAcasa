@@ -6,7 +6,6 @@ export default function AdminScraper() {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Polling la status la 2 secunde
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -42,7 +41,6 @@ export default function AdminScraper() {
           Aici poți porni pipeline-ul complet: Scraper OLX → AI Processor → Inserare DB.
         </p>
 
-        {/* Start Button */}
         <button
           onClick={handleStart}
           disabled={loading}
@@ -55,7 +53,6 @@ export default function AdminScraper() {
           {loading ? "Se pornește..." : "Pornire Scraper"}
         </button>
 
-        {/* STATUS BOX */}
         <div className="mt-6 bg-white shadow-lg rounded-xl p-6">
           <h2 className="text-xl font-semibold mb-3">Status pipeline</h2>
 
@@ -77,7 +74,6 @@ export default function AdminScraper() {
                 Ultima actualizare: {new Date(status.timestamp * 1000).toLocaleString()}
               </p>
 
-              {/* PROGRESS BAR */}
               <div className="w-full bg-gray-200 h-3 rounded-full mt-4">
                 <div
                   className={`h-3 rounded-full transition-all ${
@@ -92,7 +88,6 @@ export default function AdminScraper() {
                 />
               </div>
 
-              {/* DONE MESSAGE */}
               {status.stage === "done" && (
                 <p className="mt-4 text-green-600 font-semibold text-lg">
                   🎉 Pipeline completat cu succes!

@@ -70,7 +70,7 @@ export default function AdminIncompleteListings() {
     return fields;
   };
 
-  /* -------------------- EDIT MODAL LOGIC -------------------- */
+ 
 
   const openEditModal = (item) => {
     setEditingItem(item);
@@ -229,7 +229,6 @@ export default function AdminIncompleteListings() {
         </div>
       </div>
 
-      {/* -------- MODAL EDITARE -------- */}
       {editingItem && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
@@ -246,7 +245,6 @@ export default function AdminIncompleteListings() {
               </button>
             </div>
 
-            {/* Info sursă originală */}
             {editingItem.Listing && (
               <div className="mb-4 text-xs text-gray-500 border rounded-lg p-3 bg-gray-50">
                 <p>
@@ -275,7 +273,6 @@ export default function AdminIncompleteListings() {
 
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Titlu */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Titlu curățat
@@ -290,7 +287,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Tip proprietate */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Tip Proprietate
@@ -305,7 +301,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Tranzacție */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Tranzacție
@@ -323,7 +318,6 @@ export default function AdminIncompleteListings() {
                   </select>
                 </div>
 
-                {/* Camere */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Camere
@@ -338,7 +332,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Preț EUR */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Preț EUR
@@ -353,7 +346,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Oraș */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Oraș
@@ -368,7 +360,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Zonă */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Zonă / Cartie
@@ -383,7 +374,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Link */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Link
@@ -398,7 +388,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Imagine */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">
                     URL Imagine
@@ -413,7 +402,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* Descriere */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">
                     Descriere / Rezumat
@@ -427,7 +415,6 @@ export default function AdminIncompleteListings() {
                   />
                 </div>
 
-                {/* isOwner + qualityScore */}
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"

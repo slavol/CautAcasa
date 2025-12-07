@@ -123,9 +123,6 @@ export default function AdminDashboard() {
   );
 }
 
-/* ====================================================== */
-/* COMPONENTE                                              */
-/* ====================================================== */
 
 const COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
 
@@ -138,7 +135,6 @@ function ChartCard({ title, children }) {
   );
 }
 
-/* PIE CHART – CU LEGENDĂ (corect vizual) */
 function PieOrEmpty({ data, nameKey }) {
   if (!data.length) return <EmptyChart />;
 
@@ -164,7 +160,6 @@ function PieOrEmpty({ data, nameKey }) {
   );
 }
 
-/* BAR CHART – FĂRĂ LEGENDĂ (ca să nu mai apară text prost) */
 function BarOrEmpty({ data, dataKey }) {
   if (!data.length) return <EmptyChart />;
 

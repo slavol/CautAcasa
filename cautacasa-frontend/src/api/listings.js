@@ -8,12 +8,9 @@ const LISTINGS_API = axios.create({
   },
 });
 
-// GET all
 export const getListings = () => LISTINGS_API.get("/");
 
-// FILTER
 export const filterListings = (filters) =>
   LISTINGS_API.post("/filter", filters);
 
-// SINGLE LISTING
 export const getListingById = (id) => LISTINGS_API.get(`/${id}`);

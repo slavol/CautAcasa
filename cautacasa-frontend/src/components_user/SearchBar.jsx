@@ -13,7 +13,6 @@ export default function SearchBar({ onSearch }) {
 
   return (
     <>
-      {/* DESKTOP SEARCHBAR */}
       <form
         onSubmit={handleSubmit}
         className="hidden md:flex items-center w-full max-w-lg bg-white shadow rounded-full px-4 py-2"
@@ -28,7 +27,6 @@ export default function SearchBar({ onSearch }) {
         />
       </form>
 
-      {/* MOBILE BUTTON */}
       <button
         onClick={() => setOpenMobile(true)}
         className="md:hidden bg-white shadow rounded-full p-2"
@@ -36,7 +34,6 @@ export default function SearchBar({ onSearch }) {
         <FiSearch className="text-gray-700 text-xl" />
       </button>
 
-      {/* MOBILE OVERLAY */}
       {openMobile && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col p-4">
           <div className="flex items-center mb-4">
