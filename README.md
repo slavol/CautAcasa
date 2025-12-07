@@ -62,16 +62,38 @@ AI-ul deduce această informație din textul anunțului.
 # **C. Dezvoltarea Proiectului**
 
 ## **1. Software Architecture**
+                    ┌─────────────────────────┐
+                    │        FRONTEND         │
+                    │ React + Vite + Tailwind │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                     ┌─────────────────────┐
+                     │     BACKEND API     │
+                     │ Node.js + Express   │
+                     └───────┬─────────────┘
+       ┌──────────────────────┼────────────────────────┐
+       ▼                      ▼                        ▼
+┌─────────────┐      ┌────────────────┐       ┌──────────────────┐
+│ Auth Module │      │ Listings CRUD  │       │ AI Search (Gemini)│
+└─────────────┘      └────────────────┘       └──────────────────┘
+       │                      │                        │
+       └──────────────┬──────┴──────────┬─────────────┘
+                      ▼                 ▼
+              ┌────────────┐    ┌───────────────┐
+              │ PostgreSQL │    │ Admin Module  │
+              │  Database  │    │ Dashboard     │
+              └─────┬──────┘    │ Scraper Start │
+                    │           └───────┬───────┘
+                    │                   ▼
+                    │           ┌──────────────────┐
+                    │           │ PYTHON SCRAPER   │
+                    │           │ + AI PROCESSING  │
+                    ▼           │ (Ollama Qwen)    │
+            ┌───────────────────────┐──────────────┘
+            │  Listing / ListingAI  │
+            └────────────────────────┘
 
-Arhitectura este modulară și separată în 5 sisteme principale.
-
-FRONTEND (React + Vite)
-   ↓ Axios
-BACKEND (Node.js + Express + Prisma)
-   ↓ PostgreSQL
-DATABASE (Listing, ListingAI, User, Chat, AiQueryLog)
-   ↑
-SCRAPER (Python + OLX API + Ollama AI Cleaner)
 
 ## **3. Lista modulelor + descriere**
 
