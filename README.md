@@ -13,9 +13,6 @@ Scopul aplicației este de a automatiza colectarea și standardizarea anunțuril
 
 # **B. Explicitarile culese de la potențiali clienți**
 
-Pe baza feedback-ului de la utilizatori reali, s-au derivat următoarele cerințe funcționale:
-
----
 
 ### **REQ1 – Căutare intuitivă și rapidă**
 Utilizatorii vor filtre simple:
@@ -68,29 +65,31 @@ AI-ul deduce această informație din textul anunțului.
 
 Arhitectura este modulară și separată în 5 sisteme principale.
 
-┌───────────────────────────────┐
-│           FRONTEND            │ (React + Vite)
-│ Pages, Components, Context     │
-│   ↓ Axios API                  │
-└──────────────┬────────────────┘
-               │ HTTP (REST)
-┌──────────────▼────────────────┐
-│            BACKEND             │ (Node.js + Express)
-│ Routes → Controllers → Prisma  │
-│ Auth • Listings • AI • Admin   │
-└──────────────┬────────────────┘
-               │ PostgreSQL
-┌──────────────▼────────────────┐
-│          DATABASE              │ (Prisma + PostgreSQL)
-│ Tables: Listing, ListingAI,    │
-│ User, Chat, AiQueryLog…        │
-└──────────────┬────────────────┘
-               │ Python Scraper
-┌──────────────▼────────────────┐
-│      SCRAPER + AI CLEANER      │ (Python + Ollama)
-│ OLX API → Normalize → AI LLM → │
-│ Insert/Update Database         │
-└───────────────────────────────┘
+                          ┌──────────────────────────────┐
+                          │           FRONTEND            │
+                          │     React + Vite + Axios      │
+                          │ Pages • Components • Context   │
+                          └───────────────┬────────────────┘
+                                          │  HTTP (REST)
+                                          ▼
+┌──────────────────────────────────────────────────────────────┐
+│                           BACKEND                            │
+│                     Node.js + Express                        │
+│  Routes → Controllers → Services → Prisma ORM → Auth/AI/etc. │
+└───────────────┬──────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│                           DATABASE                           │
+│                  PostgreSQL (via Prisma ORM)                 │
+│   Tables: Listing, ListingAI, User, Chat, AiQueryLog, ...    │
+└───────────────┬──────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│               SCRAPER + AI DATA CLEANER (Python)             │
+│ OLX API → Normalize → Local LLM (Ollama) → Clean Data → DB   │
+└──────────────────────────────────────────────────────────────┘
 
 ## **3. Lista modulelor + descriere**
 
