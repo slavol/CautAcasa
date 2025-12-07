@@ -5,8 +5,8 @@ import Login from "./pages/Login.jsx";
 import VerifyPhone from "./pages/VerifyPhone.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
-import Listings from "./pages/Listings.jsx";                // 👈 corect
-import ListingsDetails from "./pages/ListingsDetails.jsx";  // 👈 corect
+import Listings from "./pages/Listings.jsx";
+import ListingsDetails from "./pages/ListingsDetails.jsx";
 import Profile from "./pages/Profile";
 
 import ChatList from "./pages/ChatList.jsx";
@@ -14,23 +14,36 @@ import ChatRoom from "./pages/ChatRoom.jsx";
 
 import { AuthProvider } from "./context/AuthContext";
 
+// 🌟 ADMIN IMPORTS
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminListings from "./pages/AdminListings.jsx";
+import AdminListingsIncomplete from "./pages/AdminIncompleteListings.jsx";
+import AdminListingsNew from "./pages/AdminNewListings.jsx";
+import AdminScraper from "./pages/AdminScraper.jsx";
+
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute.jsx";
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+
+          {/* PUBLIC */}
           <Route path="/" element={<Dashboard />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-phone" element={<VerifyPhone />} />
           <Route path="/login" element={<Login />} />
 
-          {/* 👇 NOILE RUTE CORRECTE */}
+          {/* LISTINGS */}
           <Route path="/listings" element={<Listings />} />
           <Route path="/listings/:id" element={<ListingsDetails />} />
 
+          {/* CHAT */}
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />
 
+          {/* USER PROFILE */}
           <Route
             path="/profile"
             element={
@@ -39,6 +52,55 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* =======================
+    🔥 ADMIN ROUTES 🔥
+======================= */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              // <ProtectedAdminRoute>
+                <AdminDashboard />
+              // </ProtectedAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/listings"
+            element={
+              // <ProtectedAdminRoute>
+                <AdminListings />
+              // </ProtectedAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/listings/incomplete"
+            element={
+              // <ProtectedAdminRoute>
+                <AdminListingsIncomplete />
+              // </ProtectedAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/listings/new"
+            element={
+              // <ProtectedAdminRoute>
+                <AdminListingsNew />
+              // </ProtectedAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/scraper"
+            element={
+              // <ProtectedAdminRoute>
+                <AdminScraper />
+              // </ProtectedAdminRoute>
+            }
+          />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>

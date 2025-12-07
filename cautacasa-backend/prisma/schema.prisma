@@ -20,6 +20,7 @@ model User {
   createdAt     DateTime     @default(now())
 
   chatSessions  ChatSession[]
+  aiQueries AiQueryLog[]  
 }
 
 enum Role {
@@ -102,4 +103,18 @@ model ChatMessage {
   content       String      // textul complet al mesajului (JSON string la bot, dacă vrei)
   metadata      Json?
   createdAt     DateTime    @default(now())
+}
+
+model AiQueryLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  message   String
+  rooms     Int?       // extras automat din mesaj
+  propertyType String? // apartament, casa, garsoniera, vila etc.
+  transaction String?  // RENT / SALE
+  city      String?    // Bucuresti, Timisoara etc.
+
+  createdAt DateTime @default(now())
 }

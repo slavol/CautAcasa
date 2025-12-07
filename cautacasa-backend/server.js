@@ -7,11 +7,16 @@ import listingsRouter from "./routes/listingsRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
 import chatRouter from "./routes/chat.js";
 
+import adminRouter from "./routes/admin.js";
+
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json());
 
 // === AUTH EXISTENT ===
@@ -20,6 +25,8 @@ app.use("/api/listings", listingsRouter)
 
 app.use("/api/ai", aiRouter);
 app.use("/api/chat", chatRouter);
+
+app.use("/api/admin", adminRouter);
 
 // === START SERVER ===
 const PORT = process.env.PORT || 5000;

@@ -99,7 +99,7 @@ export default function Profile() {
 
             {user.role === "ADMIN" && (
               <button
-                onClick={() => navigate("/admin")}
+                onClick={() => navigate("/admin/dashboard")}
                 className="w-full flex items-center gap-3 p-4 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
               >
                 <FiShield className="text-xl" />

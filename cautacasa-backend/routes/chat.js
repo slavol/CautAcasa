@@ -3,6 +3,7 @@ import express from "express";
 import prisma from "../config/prisma.js";
 import { authRequired } from "../middleware/authMiddleware.js";
 import { rankListingsWithGemini } from "../ai/rankListings.js";
+import { extractAiFilters } from "../utils/aiextractor.js";
 
 const chatRouter = express.Router();
 
@@ -129,6 +130,14 @@ chatRouter.post("/send", authRequired, async (req, res) => {
       include: { Listing: true },
     });
 
+    // SALVEAZĂ LOG INTEROGARE AI
+    await prisma.aiQueryLog.create({
+      data: {
+        userId,
+        message, // întrebarea userului
+      },
+    });
+
     /* -------------------------
        SALVARE MESAJ AI + ANUNȚURI
     -------------------------- */
@@ -142,6 +151,27 @@ chatRouter.post("/send", authRequired, async (req, res) => {
         },
       },
     });
+
+    // -----------------------------------------
+    // AI FILTER EXTRACTION → AI QUERY LOG SAVE
+    // -----------------------------------------
+    try {
+      const extracted = extractAiFilters(message);
+
+      await prisma.aiQueryLog.create({
+        data: {
+          userId,
+          message,
+          rooms: extracted.rooms,
+          propertyType: extracted.propertyType,
+          transaction: extracted.transaction,
+          city: extracted.city,
+        },
+      });
+
+    } catch (err) {
+      console.error("AI Query extraction failed:", err);
+    }
 
     /* -------------------------
        RĂSPUNS CĂTRE FRONTEND

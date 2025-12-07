@@ -31,7 +31,7 @@ export default function UserDropdown({ user, closeMenu }) {
         <>
           <div className="border-t my-2"></div>
           <Link
-            to="/admin"
+            to="/admin/dashboard"
             className="block px-4 py-2 hover:bg-gray-100 text-blue-600 font-semibold"
             onClick={closeMenu}
           >
