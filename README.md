@@ -190,7 +190,61 @@ Adminul vede:
 - etapa curentă: scraper / AI processor / done
 - buton **Start Scraper**
 
+
+## Instalare
+
+Urmați pașii de mai jos pentru a instala și configura aplicația local:
+
+1. Clonați repository-ul:
+    ```bash
+    git clone https://github.com/slavol/CautAcasa.git
+    cd CautAcasa
+    ```
+2. Instalați dependențele:
+    ```bash
+    npm install
+    ```
+3. Configurați fișierul `.env` cu valorile pentru baza de date, port, chei de autentificare etc.
+4. Porniți aplicația:
+    ```bash
+    npm start
+    ```
+   Pentru dezvoltare cu actualizare automată:
+    ```bash
+    npm run dev
+    ```
+
+5. (Opțional) Utilizați Docker pentru rulare rapidă:
+    ```bash
+    docker-compose up --build
+    ```
 ---
+
+## Configurare
+
+Pentru a personaliza aplicația, modificați fișierul `.env` cu următoarele chei principale:
+
+- `PORT=3000` - Portul de rulare a aplicației
+- `MONGODB_URI=mongodb://localhost:27017/cautacasa` - Stringul de conectare la baza de date
+- `JWT_SECRET=secretul-tau` - Cheia pentru token-urile de autentificare
+- `EMAIL_SERVICE` și `EMAIL_USER`/`EMAIL_PASS` - Setări pentru notificări email
+- Alte variabile pentru integrarea cu servicii externe (ex: Cloudinary pentru imagini)
+
+### Exemplu `.env`
+
+```
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/cautacasa
+JWT_SECRET=superSecretKey
+EMAIL_SERVICE=gmail
+EMAIL_USER=contul.tau@gmail.com
+EMAIL_PASS=parola_ta
+```
+
+Modificările din `.env` necesită repornirea aplicației.
+
+---
+
 
 # **3. Validarea cerințelor REQ1–REQ5**
 
