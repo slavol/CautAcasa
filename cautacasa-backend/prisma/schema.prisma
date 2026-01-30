@@ -30,7 +30,7 @@ enum Role {
 
 model Listing {
   id             Int             @id @default(autoincrement())
-  title          String          @unique
+  title          String          
   price          Int?
   description    String?
   city           String?

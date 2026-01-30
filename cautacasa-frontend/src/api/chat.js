@@ -19,3 +19,6 @@ export const getChatMessages = (chatId) =>
 
 export const sendChatMessage = (data) =>
   CHAT_API.post("/send", data);
+
+export const deleteChatSession = (chatId) => 
+  CHAT_API.delete(`/${chatId}`);

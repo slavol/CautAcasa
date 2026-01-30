@@ -9,7 +9,12 @@ const adminRouter = express.Router();
 
 adminRouter.use(authRequired, adminRequired);
 
+// --- VARIANTA GLOBALĂ PENTRU PROCESUL SCRAPER ---
+// Ne permite să știm dacă rulează și să îl oprim
+let activeScraperProcess = null;
 
+
+// --- STATISTICI ---
 adminRouter.get("/stats/ai", async (req, res) => {
   try {
     const totalQueries = await prisma.aiQueryLog.count();
@@ -25,7 +30,6 @@ adminRouter.get("/stats/ai", async (req, res) => {
       _count: { _all: true },
       where: { propertyType: { not: null } }
     });
-
 
     const transactionStats = await prisma.aiQueryLog.groupBy({
       by: ["transaction"],
@@ -64,40 +68,49 @@ adminRouter.get("/stats/ai", async (req, res) => {
   }
 });
 
+// --- LISTARE ANUNTURI AI (CU SEARCH & FILTRE) ---
 adminRouter.get("/listings-ai", async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
+    // Parametrii de filtrare
     const onlyIncomplete = req.query.onlyIncomplete === "true";
+    const search = req.query.search ? String(req.query.search).trim() : null;
 
-    const incompleteWhere = {
-      OR: [
-        { cleanTitle: { equals: null } },
-        { cleanTitle: { equals: "" } },
+    // Construim clauza WHERE dinamic
+    const whereConditions = [];
 
-        { propertyType: { equals: null } },
-        { propertyType: { equals: "" } },
+    // 1. Logica pentru "Incomplete"
+    if (onlyIncomplete) {
+      whereConditions.push({
+        OR: [
+          { cleanTitle: { equals: null } }, { cleanTitle: { equals: "" } },
+          { propertyType: { equals: null } }, { propertyType: { equals: "" } },
+          { transaction: { equals: null } },
+          { rooms: { equals: null } },
+          { summary: { equals: null } }, { summary: { equals: "" } },
+          { priceEUR: { equals: null } },
+          { city: { equals: null } }, { city: { equals: "" } },
+          { image: { equals: null } }, { image: { equals: "" } },
+        ],
+      });
+    }
 
-        { transaction: { equals: null } },
+    // 2. Logica pentru "Search" (Global Search)
+    if (search) {
+      whereConditions.push({
+        OR: [
+          { cleanTitle: { contains: search, mode: 'insensitive' } },
+          { city: { contains: search, mode: 'insensitive' } },
+          { zone: { contains: search, mode: 'insensitive' } },
+          { Listing: { title: { contains: search, mode: 'insensitive' } } }
+        ]
+      });
+    }
 
-        { rooms: { equals: null } },
-
-        { summary: { equals: null } },
-        { summary: { equals: "" } },
-
-        { priceEUR: { equals: null } },
-
-        { city: { equals: null } },
-        { city: { equals: "" } },
-
-        { image: { equals: null } },
-        { image: { equals: "" } },
-      ],
-    };
-
-    const where = onlyIncomplete ? incompleteWhere : {};
+    const where = whereConditions.length > 0 ? { AND: whereConditions } : {};
 
     const [items, total] = await Promise.all([
       prisma.listingAI.findMany({
@@ -107,7 +120,6 @@ adminRouter.get("/listings-ai", async (req, res) => {
         take: limit,
         orderBy: { updatedAt: "desc" },
       }),
-
       prisma.listingAI.count({ where })
     ]);
 
@@ -124,6 +136,7 @@ adminRouter.get("/listings-ai", async (req, res) => {
   }
 });
 
+// --- CREATE ---
 adminRouter.post("/listings-ai", async (req, res) => {
   try {
     const {
@@ -179,48 +192,15 @@ adminRouter.post("/listings-ai", async (req, res) => {
   }
 });
 
+// --- UPDATE ---
 adminRouter.put("/listings-ai/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if (!id || isNaN(id)) {
-      return res.status(400).json({ error: "Invalid id" });
-    }
-
-    const {
-      cleanTitle,
-      propertyType,
-      transaction,
-      rooms,
-      summary,
-      priceRON,
-      priceEUR,
-      city,
-      zone,
-      image,
-      link,
-      isOwner,
-      qualityScore,
-      listingId,
-    } = req.body;
+    if (!id || isNaN(id)) return res.status(400).json({ error: "Invalid id" });
 
     const updated = await prisma.listingAI.update({
       where: { id },
-      data: {
-        listingId,
-        cleanTitle,
-        propertyType,
-        transaction,
-        rooms,
-        summary,
-        priceRON,
-        priceEUR,
-        city,
-        zone,
-        image,
-        link,
-        isOwner,
-        qualityScore,
-      },
+      data: req.body, // Actualizăm direct cu ce primim (asigură-te că body-ul e curat în frontend)
     });
 
     return res.json({ item: updated });
@@ -230,13 +210,13 @@ adminRouter.put("/listings-ai/:id", async (req, res) => {
   }
 });
 
+// --- DELETE ---
 adminRouter.delete("/listings-ai/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!id) return res.status(400).json({ error: "Invalid ID" });
 
     await prisma.listingAI.delete({ where: { id } });
-
     return res.json({ success: true });
 
   } catch (err) {
@@ -246,68 +226,114 @@ adminRouter.delete("/listings-ai/:id", async (req, res) => {
 });
 
 
-let currentScraperJob = {
-  running: false,
-  progress: 0,
-  lastUpdate: null,
-};
+// =========================================================
+// --- SCRAPER MANAGEMENT (START / STOP / STATUS) ---
+// =========================================================
 
-
+// 1. START SCRAPER
 adminRouter.post("/scraper/start", async (req, res) => {
   try {
+    // Verificăm dacă rulează deja
+    if (activeScraperProcess) {
+      return res.status(400).json({ error: "Scraper is already running." });
+    }
+
     const scriptPath = path.join(process.cwd(), "scraper/run_all.py");
+    console.log("[SCRAPER] Starting script:", scriptPath);
 
-    const py = spawn("python3", [scriptPath]);
+    // Pornim procesul
+    activeScraperProcess = spawn("python3", [scriptPath]);
 
-    py.stdout.on("data", (data) => {
-      console.log("[SCRAPER]", data.toString());
+    console.log(`[SCRAPER] Started with PID: ${activeScraperProcess.pid}`);
+
+    // Ascultăm output-ul pentru debugging server-side
+    activeScraperProcess.stdout.on("data", (data) => {
+      console.log("[SCRAPER STDOUT]", data.toString().trim());
     });
 
-    py.stderr.on("data", (data) => {
-      console.error("[SCRAPER ERROR]", data.toString());
+    activeScraperProcess.stderr.on("data", (data) => {
+      console.error("[SCRAPER STDERR]", data.toString().trim());
     });
 
-    py.on("close", (code) => {
-      console.log("SCRAPER FINISHED WITH CODE", code);
+    // Când se termină (singur sau cu eroare), curățăm variabila
+    activeScraperProcess.on("close", (code) => {
+      console.log(`[SCRAPER] Finished/Closed with code ${code}`);
+      activeScraperProcess = null;
     });
 
     return res.json({ ok: true, message: "Scraper has started." });
 
   } catch (err) {
-    console.error(err);
+    console.error("[SCRAPER START ERROR]", err);
+    activeScraperProcess = null;
     res.status(500).json({ error: "Could not start scraper." });
   }
 });
 
+// 2. STOP SCRAPER
+adminRouter.post("/scraper/stop", async (req, res) => {
+  try {
+    if (!activeScraperProcess) {
+      return res.json({ message: "No active process found to stop." });
+    }
+
+    // Trimitem semnal de kill (SIGTERM)
+    console.log(`[SCRAPER] Killing process PID: ${activeScraperProcess.pid}`);
+    activeScraperProcess.kill("SIGTERM"); 
+    activeScraperProcess = null;
+
+    // Actualizăm manual fișierul JSON ca frontend-ul să vadă imediat schimbarea
+    const progressFile = path.join(process.cwd(), "scraper/progress.json");
+    
+    // Asigurăm că folderul există (just in case)
+    const dir = path.dirname(progressFile);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    const stopState = {
+      running: false,
+      stage: "STOPPED",
+      message: "Process stopped by user.",
+      logs: ["[SYSTEM] Process killed manually via Admin Panel."],
+      progress: 0,
+      total: 0,
+      current: 0,
+      timestamp: Date.now() / 1000
+    };
+    
+    fs.writeFileSync(progressFile, JSON.stringify(stopState));
+
+    res.json({ success: true, message: "Scraper stopped successfully." });
+
+  } catch (err) {
+    console.error("[SCRAPER STOP ERROR]", err);
+    res.status(500).json({ error: "Could not stop scraper." });
+  }
+});
+
+// 3. GET STATUS
 adminRouter.get("/scraper/status", (req, res) => {
   try {
     const file = path.join(process.cwd(), "scraper/progress.json");
 
     if (!fs.existsSync(file)) {
-      return res.json({ running: false });
+      return res.json({ running: false, stage: "IDLE", logs: [] });
     }
 
     const data = JSON.parse(fs.readFileSync(file, "utf-8"));
+    
+    // Siguranță: Dacă backend-ul s-a restartat, variabila activeScraperProcess e null,
+    // dar JSON-ul ar putea zice încă "running: true". Corectăm asta doar vizual.
+    if (!activeScraperProcess && data.running) {
+        data.running = false;
+        data.message = "Process disconnected (server restart).";
+    }
+
     return res.json(data);
 
   } catch (err) {
-    return res.status(500).json({ error: "Cannot read progress" });
+    // Dacă citirea fișierului eșuează (e.g. scriere concurentă), returnăm un status neutru
+    return res.json({ running: activeScraperProcess !== null });
   }
 });
-
-function simulateScraperProgress() {
-  const interval = setInterval(() => {
-    if (!currentScraperJob.running) return clearInterval(interval);
-
-    currentScraperJob.progress += 10;
-    currentScraperJob.lastUpdate = new Date();
-
-    if (currentScraperJob.progress >= 100) {
-      currentScraperJob.running = false;
-      currentScraperJob.progress = 100;
-      clearInterval(interval);
-    }
-  }, 1000);
-}
 
 export default adminRouter;

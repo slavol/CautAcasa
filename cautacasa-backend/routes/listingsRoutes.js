@@ -3,42 +3,12 @@ import prisma from "../config/prisma.js";
 
 const listingsRouter = express.Router();
 
+// GET /api/listings
 listingsRouter.get("/", async (req, res) => {
-  const { city, rooms, priceMin, priceMax } = req.query;
-
-  const filters = {};
-
-  if (city) filters.city = city;
-  if (rooms) filters.rooms = Number(rooms);
-
-  if (priceMin || priceMax) {
-    filters.priceRON = {};
-    if (priceMin) filters.priceRON.gte = Number(priceMin);
-    if (priceMax) filters.priceRON.lte = Number(priceMax);
-  }
-
-  const data = await prisma.listingAI.findMany({
-    where: filters,
-    orderBy: { id: "desc" },
-  });
-
-  res.json(data);
-});
-
-listingsRouter.get("/:id", async (req, res) => {
-  const id = Number(req.params.id);
-
-  const listing = await prisma.listingAI.findUnique({
-    where: { id },
-  });
-
-  if (!listing) return res.status(404).json({ error: "Listing not found" });
-
-  res.json(listing);
-});
-
-listingsRouter.post("/filter", async (req, res) => {
   try {
+    console.log("--- REQUEST NOU ---");
+    console.log("Parametrii primiți:", req.query);
+
     const {
       q,
       priceMin,
@@ -49,63 +19,118 @@ listingsRouter.post("/filter", async (req, res) => {
       transaction,
       isOwner,
       page = 1,
-      limit = 10
-    } = req.body;
+      limit = 9
+    } = req.query;
 
-    const filters = {};
+    // Construim filtrul (WHERE)
+    const where = {};
 
+    // 1. Căutare (Titlu, Oras)
     if (q && q.trim() !== "") {
-      filters.OR = [
-        { cleanTitle: { contains: q.trim(), mode: "insensitive" } },
-        { summary: { contains: q.trim(), mode: "insensitive" } }
+      where.OR = [
+        { cleanTitle: { contains: q, mode: "insensitive" } },
+        { city: { contains: q, mode: "insensitive" } },
+        { summary: { contains: q, mode: "insensitive" } }
       ];
     }
 
+    // 2. Preț (Verificăm să fie număr valid)
     if (priceMin || priceMax) {
-      filters.priceEUR = {};
-      if (priceMin) filters.priceEUR.gte = Number(priceMin);
-      if (priceMax) filters.priceEUR.lte = Number(priceMax);
+      where.priceEUR = {};
+      if (priceMin) where.priceEUR.gte = Number(priceMin);
+      if (priceMax) where.priceEUR.lte = Number(priceMax);
     }
 
+    // 3. Camere
     if (roomsMin || roomsMax) {
-      filters.rooms = {};
-      if (roomsMin) filters.rooms.gte = Number(roomsMin);
-      if (roomsMax) filters.rooms.lte = Number(roomsMax);
+      where.rooms = {};
+      if (roomsMin) where.rooms.gte = Number(roomsMin);
+      if (roomsMax) where.rooms.lte = Number(roomsMax);
     }
 
-    if (propertyType) filters.propertyType = propertyType;
+    // 4. Tip & Tranzacție
+    if (propertyType && propertyType.trim() !== "") {
+      where.propertyType = { contains: propertyType, mode: "insensitive" };
+    }
+    if (transaction && transaction.trim() !== "") {
+      where.transaction = transaction; // Trebuie să fie exact (RENT/SALE)
+    }
 
+    // 5. Proprietar vs Agenție
+    if (isOwner === "true") {
+      where.isOwner = true;
+    } else if (isOwner === "false") {
+      // Includem și NULL (nedetectat) la Agenții
+      where.OR = [
+        ...(where.OR || []), // Păstrăm OR-ul de la search text dacă există
+        { isOwner: false },
+        { isOwner: null }
+      ];
+      // Notă: Dacă ai și Search Text ȘI Agenție, logica de mai sus cu OR combinat
+      // poate fi tricky. Pentru moment, simplificăm:
+      // Dacă există deja un OR (de la text), prisma nu acceptă două OR-uri la nivel root ușor.
+      // Pentru stabilitate acum, dacă userul caută text, ignorăm filtrarea strictă pe agenție
+      // sau folosim AND explicit. Dar să vedem dacă merge simplu întâi.
+      
+      // FIX SIGUR PENTRU OR MULTIPLU:
+      if (q && q.trim() !== "") {
+          // Dacă avem deja search, folosim AND pentru a adăuga condiția de agenție
+           where.AND = [
+               { OR: [ { isOwner: false }, { isOwner: null } ] }
+           ];
+      } else {
+          // Dacă nu avem search, putem folosi OR direct
+          where.OR = [ { isOwner: false }, { isOwner: null } ];
+      }
+    }
 
-    if (transaction) filters.transaction = transaction;
+    console.log("Filtre aplicate (WHERE):", JSON.stringify(where, null, 2));
 
-    if (isOwner === "true") filters.isOwner = true;
-    if (isOwner === "false") filters.isOwner = false;
+    // Paginare
+    const take = Number(limit) || 9;
+    const skip = (Number(page) - 1) * take;
 
-    const skip = (Number(page) - 1) * Number(limit);
-
+    // Query DB
     const [listings, total] = await Promise.all([
       prisma.listingAI.findMany({
-        where: filters,
-        skip,
-        take: Number(limit),
-        orderBy: { id: "desc" }
+        where: where,
+        take: take,
+        skip: skip,
+        orderBy: { id: "desc" },
+        include: { Listing: true } // Aducem imaginea originală
       }),
-      prisma.listingAI.count({ where: filters })
+      prisma.listingAI.count({ where: where })
     ]);
 
-    const totalPages = Math.ceil(total / Number(limit));
+    console.log(`Găsite: ${total} anunțuri.`);
 
     res.json({
       listings,
       total,
-      totalPages,
+      totalPages: Math.ceil(total / take),
       page: Number(page)
     });
 
   } catch (error) {
-    console.error("FILTER ERROR:", error);
-    res.status(500).json({ error: "Server error" });
+    console.error("EROARE CRITICĂ BACKEND:", error);
+    // Trimitem un răspuns gol valid ca să nu crape frontend-ul
+    res.json({ listings: [], total: 0, totalPages: 0, page: 1 });
   }
+});
+
+// GET Listing by ID
+listingsRouter.get("/:id", async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const item = await prisma.listingAI.findUnique({
+            where: { id },
+            include: { Listing: true }
+        });
+        if (item) return res.json(item);
+        return res.status(404).json({error: "Nu exista"});
+    } catch(e) {
+        res.status(500).json({error: "Err"});
+    }
 });
 
 export default listingsRouter;

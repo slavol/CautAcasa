@@ -2,23 +2,44 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import UserDropdown from "./UserDropdown";
 import UserAvatar from "./UserAvatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { RiRobot2Line } from "react-icons/ri";
 
 export default function UserNavbar() {
   const { user } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Funcție care decide ce facem când dăm click pe Logo
+  const handleLogoClick = (e) => {
+    e.preventDefault(); // Oprim comportamentul standard
+
+    if (location.pathname === "/listings") {
+      // Dacă suntem DEJA pe listings, forțăm un reload complet al paginii
+      // Asta șterge filtrele și ne duce la pagina 1
+      window.location.reload();
+    } else {
+      // Dacă suntem altundeva (ex: Chat), navigăm normal
+      navigate("/listings");
+    }
+  };
 
   return (
     <nav className="w-full bg-white shadow-md py-3 px-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-        <Link
-          to="/listings"
-          className="text-2xl font-bold select-none whitespace-nowrap"
+        {/* --- LOGO CU RESET FORȚAT --- */}
+        <a
+          href="/listings"
+          onClick={handleLogoClick}
+          className="text-2xl font-bold select-none whitespace-nowrap cursor-pointer flex items-center gap-2 group"
         >
-          Caut<span className="text-blue-600">Acasa</span>
-        </Link>
+          <span>🏡</span>
+          <span>
+            Caut<span className="text-blue-600">Acasa</span>
+          </span>
+        </a>
 
         <div className="flex items-center gap-4">
 

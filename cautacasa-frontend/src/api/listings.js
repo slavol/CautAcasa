@@ -8,9 +8,13 @@ const LISTINGS_API = axios.create({
   },
 });
 
-export const getListings = () => LISTINGS_API.get("/");
-
+// --- MODIFICAREA IMPORTANTĂ ---
+// Schimbăm din .post("/filter") în .get("/")
+// Parametrii (filters) sunt trimiși automat în URL (ex: ?isOwner=true&priceMin=100)
 export const filterListings = (filters) =>
-  LISTINGS_API.post("/filter", filters);
+  LISTINGS_API.get("/", { params: filters });
+
+// Aceasta rămâne la fel (practic face același lucru ca filterListings fără parametri)
+export const getListings = () => LISTINGS_API.get("/");
 
 export const getListingById = (id) => LISTINGS_API.get(`/${id}`);

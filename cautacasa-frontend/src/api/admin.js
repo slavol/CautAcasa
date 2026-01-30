@@ -26,6 +26,9 @@ export const getAdminListingsAI = (options = {}) => {
   if (options.page) params.append("page", options.page);
   if (options.limit) params.append("limit", options.limit);
   if (options.onlyIncomplete) params.append("onlyIncomplete", "true");
+  
+  // --- FIX: Adăugăm parametrul de căutare ---
+  if (options.search) params.append("search", options.search);
 
   return ADMIN_API.get(`/listings-ai?${params.toString()}`);
 };
@@ -41,6 +44,8 @@ export const deleteListingAI = (id) =>
 
 
 export const startScraper = () => ADMIN_API.post("/scraper/start");
+
+export const stopScraper = () => ADMIN_API.post("/scraper/stop");
 
 export const getScraperStatus = () => ADMIN_API.get("/scraper/status");
 

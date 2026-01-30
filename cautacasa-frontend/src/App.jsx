@@ -36,7 +36,13 @@ export default function App() {
           <Route path="/listings" element={<Listings />} />
           <Route path="/listings/:id" element={<ListingsDetails />} />
 
+          {/* RUTELE DE CHAT */}
           <Route path="/chat" element={<ChatList />} />
+          
+          {/* 1. RUTA NOUĂ: Aceasta deschide camera goală */}
+          <Route path="/chat/new" element={<ChatRoom />} /> 
+          
+          {/* 2. RUTA EXISTENTĂ: Pentru chat cu istoric */}
           <Route path="/chat/:chatId" element={<ChatRoom />} />
 
           <Route
