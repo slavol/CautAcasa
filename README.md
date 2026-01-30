@@ -151,6 +151,26 @@ Filtre disponibile:
 
 Datele provin din tabelul **ListingAI** (curățat).
 
+## Diagrama fluxului de utilizator
+
+```mermaid
+flowchart TD
+    Start[Start - Deschide aplicația]
+    Start --> Autentificare[Autentificare/Înregistrare]
+    Autentificare --> Dashboard[Acces dashboard]
+    Dashboard --> CautaAnunt[Caută anunț]
+    Dashboard --> AdaugaAnunt[Adaugă anunț nou]
+    CautaAnunt --> VizualizareAnunt[Vizualizează detalii anunț]
+    VizualizareAnunt --> TrimiteMesaj[Trimite mesaj proprietarului]
+    AdaugaAnunt --> Galerie[Adaugă poze și detalii]
+    Galerie --> Publicare[Publică anunțul]
+    Publicare --> Dashboard
+    TrimiteMesaj --> Dashboard
+```
+
+---
+
+
 ### 🤖 Căutare AI
 Userul scrie text:
 > „Caut o casă în Dumbrăvița cu minim 500 mp teren, până în 200.000 euro.”
@@ -246,7 +266,7 @@ Modificările din `.env` necesită repornirea aplicației.
 ---
 
 
-# **3. Validarea cerințelor REQ1–REQ5**
+# **Validarea cerințelor REQ1–REQ5**
 
 | Cerință | Rezolvare |
 |--------|-----------|
