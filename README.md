@@ -151,23 +151,6 @@ Filtre disponibile:
 
 Datele provin din tabelul **ListingAI** (curățat).
 
-## Diagrama fluxului de utilizator
-
-```mermaid
-flowchart TD
-    Start[Start - Deschide aplicația]
-    Start --> Autentificare[Autentificare/Înregistrare]
-    Autentificare --> Dashboard[Acces dashboard]
-    Dashboard --> CautaAnunt[Caută anunț]
-    Dashboard --> AdaugaAnunt[Adaugă anunț nou]
-    CautaAnunt --> VizualizareAnunt[Vizualizează detalii anunț]
-    VizualizareAnunt --> TrimiteMesaj[Trimite mesaj proprietarului]
-    AdaugaAnunt --> Galerie[Adaugă poze și detalii]
-    Galerie --> Publicare[Publică anunțul]
-    Publicare --> Dashboard
-    TrimiteMesaj --> Dashboard
-```
-
 ---
 
 
@@ -210,7 +193,41 @@ Adminul vede:
 - etapa curentă: scraper / AI processor / done
 - buton **Start Scraper**
 
+## Diagrama fluxulurilor
 
+```mermaid
+
+flowchart TD
+    Start[Start - Deschide CautAcasa] --> Auth{Autentificare}
+    
+    Auth -->|Utilizator| Dashboard[Dashboard User]
+    Auth -->|Admin| AdminPanel[Panou Administrare]
+
+    %% Flux Utilizator
+    Dashboard --> AISearch[Căutare Limbaj Natural - Llama 3.1]
+    Dashboard --> ClassicFilters[Filtre Clasice - Oraș, Preț, Camere]
+    
+    AISearch --> Results[Vizualizare Rezultate Standardizate]
+    ClassicFilters --> Results
+    
+    Results --> Details[Detalii Anunț - Date extrase de AI]
+    Details --> History[Salvare în Istoric Conversații]
+    History --> Dashboard
+
+    %% Flux Admin
+    AdminPanel --> Stats[Vizualizare Statistici AI & Zone]
+    AdminPanel --> ScraperControl[Control Scraper Panel]
+    AdminPanel --> ManageListings[Gestionare Anunțuri AI]
+
+    ScraperControl --> StartScraper[Pornire Scraper OLX]
+    StartScraper --> LiveLogs[Monitorizare Log-uri Live & Progres]
+    LiveLogs --> AIProcessing[Procesare Automată Hermes 3]
+    AIProcessing --> StopProcess[Buton STOP / Finalizare]
+    StopProcess --> AdminPanel
+
+    ManageListings --> EditListing[Editare/Completare Date AI]
+    EditListing --> AdminPanel
+```
 ## Instalare
 
 Urmați pașii de mai jos pentru a instala și configura aplicația local:
