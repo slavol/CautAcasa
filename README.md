@@ -197,7 +197,7 @@ Adminul vede:
 | Cerință | Rezolvare |
 |--------|-----------|
 | **REQ1 – Căutare intuitivă** | Filtre complete în frontend + query performant în backend |
-| **REQ2 – AI natural language search** | Implementare cu Google Gemini |
+| **REQ2 – AI natural language search** | Implementare cu Ollama |
 | **REQ3 – Date curate** | Procesare cu Qwen2.5 via Ollama (Python) |
 | **REQ4 – Istoric** | Tabel dedicat în DB + UI pentru utilizator |
 | **REQ5 – Identificare agenție** | AI detectează automat PROPRIETAR/AGENTIE |
