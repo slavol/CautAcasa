@@ -192,6 +192,52 @@ Adminul vede:
 
 ---
 
+⚙️ Ghid de Instalare și Configurare
+1. Inteligență Artificială (Ollama)
+
+Sistemul rulează 100% local. Necesită Ollama (instalat local sau în Docker).
+
+Instalare: ollama.ai
+
+Modele necesare:
+
+Bash
+ollama pull llama3.1:latest
+ollama pull hermes3:latest
+Configurare Remote: Setați variabila de mediu OLLAMA_HOST=0.0.0.0 dacă AI-ul rulează pe alt PC/Docker.
+
+2. Baza de Date & Backend (Node.js)
+
+Intrat în folder: cd backend
+
+Instalare: npm install
+
+Configurare .env:
+
+Code snippet
+DATABASE_URL="postgresql://utilizator:parola@localhost:5432/cautacasa"
+JWT_SECRET="cheie_secreta_proiect"
+OLLAMA_HOST="http://IP_SERVER_AI:11434"
+Sincronizare DB: npx prisma db push
+
+Pornire: npm run dev
+
+3. Scraper (Python)
+
+Intrat în folder: cd backend/scraper
+
+Instalare cerințe: pip install requests psycopg2-binary
+
+Asigurați-vă că IP-ul din local_ai.py corespunde cu serverul Ollama.
+
+4. Interfața (React)
+
+Intrat în folder: cd frontend
+
+Instalare: npm install
+
+Pornire: npm run dev
+
 # **3. Validarea cerințelor REQ1–REQ5**
 
 | Cerință | Rezolvare |
