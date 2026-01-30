@@ -3,7 +3,7 @@
 CautAcasa este o platformă modernă de căutare imobiliară care combină:
 - 📡 Scraper automat OLX (Python)
 - 🧠 Curățare date cu AI local (Ollama – Qwen2.5 7B)
-- 🤖 Chat AI inteligent cu Google Gemini
+- 🤖 Chat AI inteligent cu AI local (Ollama)
 - 🔍 Motor de căutare clasică + căutare în limbaj natural
 - 🛠️ Panou complet de administrare
 
